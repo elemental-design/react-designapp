@@ -74,6 +74,15 @@ function pickShadowProp<T>(
   textShadowValue: T | null | undefined,
   defaultValue: T,
 ): T {
+  // `shadow*` (the `ViewStyle`/box-shadow fields) intentionally takes
+  // precedence over `textShadow*` when both are present on the same style
+  // object, mirroring the Sketch backend's existing shadow resolution
+  // (`makeShadow`/`makeTextShadow` in the Sketch json utils, which are only
+  // ever invoked with one or the other, never both at once). In practice a
+  // given style object only ever populates one of the two families, so this
+  // precedence is a tie-breaker for the (currently unreachable) case where a
+  // caller merges both onto a single object rather than an active behavior
+  // difference.
   if (shadowValue !== undefined && shadowValue !== null) {
     return shadowValue;
   }

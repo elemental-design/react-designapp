@@ -24,6 +24,18 @@ describe('platformBridges/node makeImageDataFromUrl', () => {
     expect(makeImageDataFromUrl('http://172.16.0.1/image.png')).toBe(ERROR_IMAGE);
   });
 
+  it('falls back to the error-image placeholder for alternate IPv4 encodings', () => {
+    // 2130706433 and 0x7f000001 are both equivalent to 127.0.0.1.
+    expect(makeImageDataFromUrl('http://2130706433/image.png')).toBe(ERROR_IMAGE);
+    expect(makeImageDataFromUrl('http://0x7f000001/image.png')).toBe(ERROR_IMAGE);
+  });
+
+  it('falls back to the error-image placeholder for internal IPv6 hosts', () => {
+    expect(makeImageDataFromUrl('http://[::1]/image.png')).toBe(ERROR_IMAGE);
+    expect(makeImageDataFromUrl('http://[fe80::1]/image.png')).toBe(ERROR_IMAGE);
+    expect(makeImageDataFromUrl('http://[::ffff:127.0.0.1]/image.png')).toBe(ERROR_IMAGE);
+  });
+
   it('falls back to the error-image placeholder for a missing local file', () => {
     expect(makeImageDataFromUrl('/no/such/file.png')).toBe(ERROR_IMAGE);
   });

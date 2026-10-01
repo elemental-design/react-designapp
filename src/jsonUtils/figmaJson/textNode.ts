@@ -10,6 +10,12 @@ function diffTextStyle(
 ): Partial<FigmaTextStyle> {
   const diff: Partial<FigmaTextStyle> = {};
 
+  // `FigmaTextStyle`'s fields are all primitives (string/number/boolean), so
+  // `!==` here is a correct, exact equality check. If a future field is
+  // added to `FigmaTextStyle` that holds an object/array, this comparison
+  // would become referential rather than deep and could report false
+  // differences for deeply-equal values -- switch to a deep-equal check at
+  // that point.
   (Object.keys(run) as (keyof FigmaTextStyle)[]).forEach(<K extends keyof FigmaTextStyle>(key: K) => {
     if (run[key] !== base[key]) {
       diff[key] = run[key];

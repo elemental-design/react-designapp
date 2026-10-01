@@ -48,31 +48,78 @@ function readLocalFile(url: string): Buffer | undefined {
 }
 
 // Basic SSRF guard: rejects obviously-internal hosts (loopback, link-local
-// including the `169.254.169.254` cloud metadata address, and RFC1918
-// private ranges) before shelling out to `curl`. This is a best-effort,
-// literal-IP/hostname check -- it does not resolve DNS, so it cannot catch
-// DNS-rebinding attacks. Callers that accept image URLs from untrusted
-// input should perform additional validation (e.g. an allow-list) upstream.
-function isBlockedHost(hostname: string): boolean {
-  const host = hostname.toLowerCase();
-
-  if (host === 'localhost' || host === '::1' || host === '0.0.0.0') {
-    return true;
+// including the `169.254.169.254` cloud metadata address, RFC1918 private
+// ranges, their IPv6 equivalents, and common alternate IPv4 encodings such
+// as a plain decimal/hex integer). This is a best-effort, literal
+// IP/hostname check -- it does not perform DNS resolution, so it cannot
+// catch DNS-rebinding attacks where a hostname's A/AAAA record changes
+// between this check and curl's own lookup. Redirects are intentionally
+// *not* followed (no `-L`) so that an allowed host can't bounce the request
+// to a blocked internal address after this check runs. Callers that accept
+// image URLs from untrusted input should perform additional validation
+// (e.g. an allow-list) upstream.
+function isBlockedIPv4(host: string): boolean {
+  // Standard dotted-quad form.
+  const dotted = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
+  if (dotted) {
+    const [a, b] = dotted.slice(1, 3).map(Number);
+    return (
+      a === 127 || // loopback
+      a === 10 || // 10.0.0.0/8
+      (a === 172 && b >= 16 && b <= 31) || // 172.16.0.0/12
+      (a === 192 && b === 168) || // 192.168.0.0/16
+      (a === 169 && b === 254) // 169.254.0.0/16 (incl. cloud metadata)
+    );
   }
 
-  const ipv4Match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
-  if (!ipv4Match) {
+  // Alternate encodings (plain decimal or hex integer, e.g.
+  // `http://2130706433/` or `http://0x7f000001/`, both equivalent to
+  // `127.0.0.1`) that browsers/curl still resolve as IPv4 addresses.
+  const isDecimal = /^\d+$/.test(host);
+  const isHex = /^0x[0-9a-f]+$/.test(host);
+  if (!isDecimal && !isHex) {
     return false;
   }
 
-  const [a, b] = ipv4Match.slice(1, 3).map(Number);
+  const num = isHex ? parseInt(host, 16) : parseInt(host, 10);
+  if (!Number.isFinite(num) || num < 0 || num > 0xffffffff) {
+    return false;
+  }
+
+  const a = (num >>> 24) & 0xff;
+  const b = (num >>> 16) & 0xff;
   return (
-    a === 127 || // loopback
-    a === 10 || // 10.0.0.0/8
-    (a === 172 && b >= 16 && b <= 31) || // 172.16.0.0/12
-    (a === 192 && b === 168) || // 192.168.0.0/16
-    (a === 169 && b === 254) // 169.254.0.0/16 (incl. cloud metadata)
+    a === 127 ||
+    a === 10 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 169 && b === 254)
   );
+}
+
+function isBlockedIPv6(host: string): boolean {
+  if (host === '::1' || host === '0:0:0:0:0:0:0:1') {
+    return true;
+  }
+  if (host.startsWith('fe80:') || host.startsWith('fc00:') || host.startsWith('fd')) {
+    return true; // link-local and unique-local (fc00::/7)
+  }
+  // IPv4-mapped IPv6 addresses, e.g. `::ffff:127.0.0.1`.
+  const mapped = /^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/.exec(host);
+  if (mapped) {
+    return isBlockedIPv4(mapped[1]);
+  }
+  return false;
+}
+
+function isBlockedHost(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+
+  if (host === 'localhost' || host === '0.0.0.0') {
+    return true;
+  }
+
+  return host.includes(':') ? isBlockedIPv6(host) : isBlockedIPv4(host);
 }
 
 function readRemoteURL(url: string): Buffer | undefined {
@@ -88,7 +135,9 @@ function readRemoteURL(url: string): Buffer | undefined {
     // execFileSync keeps this synchronous, matching the bridge interface.
     // `curl` is available on virtually every CI/dev machine; if it's
     // missing this simply falls through to the error-image placeholder.
-    return execFileSync('curl', ['-sL', '--max-time', '5', '--', url], {
+    // Note: `-L` (follow redirects) is intentionally omitted -- see the
+    // `isBlockedHost` comment above.
+    return execFileSync('curl', ['-s', '--max-time', '5', '--', url], {
       maxBuffer: 1024 * 1024 * 10,
     });
   } catch (err) {

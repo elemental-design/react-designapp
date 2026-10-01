@@ -2,6 +2,12 @@
 
 - [`render`](#renderelement-container)
 - [`renderToJSON`](#rendertojsonelement)
+- [`renderToFigmaJSON`](#rendertofigmajsonplatformbridge)
+- [`renderToDesignJSON`](#rendertodesignjsonelement-options)
+- [Backends](#backends)
+  - [`registerBackend`](#registerbackendbackend)
+  - [`getBackend`](#getbackendname)
+  - [`listBackends`](#listbackends)
 - [Components](#components)
   - [`<Document>`](#document)
   - [`<Page>`](#page)
@@ -93,6 +99,85 @@ Top-level React component that defines your Sketch document.
 #### Returns
 
 The top-most Sketch layer as JSON.
+
+### `renderToFigmaJSON(platformBridge?)`
+
+Returns a function that renders a React element to a Figma REST-API-shaped file-format JSON
+document, headlessly — no Figma API/network usage and no live/hot renderer. A separate Figma
+plugin is responsible for importing this JSON and creating the actual pages, frames, text nodes,
+and styles in a Figma document.
+
+#### Parameters
+
+##### `platformBridge` (optional)
+
+A `PlatformBridge` implementation (`createStringMeasurer`, `findFontName`,
+`makeImageDataFromUrl`). Defaults to a pure Node.js bridge (no native addon required), so this
+runs in plain Node.js environments without Sketch or `node-sketch-bridge` installed.
+
+#### Returns
+
+A function `(element, options?) => FigmaFile` producing the Figma document JSON.
+
+#### Example
+
+```js
+import { renderToFigmaJSON } from 'react-sketchapp2';
+
+const figmaFile = renderToFigmaJSON()(<App />);
+```
+
+### `renderToDesignJSON(element, options)`
+
+Explicit, simple backend selection: renders a React element with whichever backend you choose
+(`'sketch'` or `'figma'`, defaulting to `'sketch'`), via the shared backend registry.
+
+#### Parameters
+
+##### `element` (required)
+
+Top-level React component that defines your document.
+
+##### `options` (optional)
+
+- `backend` — `'sketch'` (default) or `'figma'`, or the name of any backend registered via
+  `registerBackend`.
+- `platformBridge` — optional `PlatformBridge` override.
+- any additional backend-specific options.
+
+#### Returns
+
+The backend-specific JSON output (Sketch file JSON or Figma file JSON).
+
+#### Example
+
+```js
+import { renderToDesignJSON } from 'react-sketchapp2';
+
+const figmaFile = renderToDesignJSON(<App />, { backend: 'figma' });
+const sketchFile = renderToDesignJSON(<App />, { backend: 'sketch' });
+```
+
+## Backends
+
+The core reconciler/layout engine builds a design-app-neutral intermediate tree, which is then
+converted to a native output format by a **backend**. `react-sketchapp2` ships `sketch` and
+`figma` backends, registered by default, and exposes a small registry so additional backends
+(e.g. a future Penpot backend) can be added without changing the core.
+
+### `registerBackend(backend)`
+
+Registers a `RenderBackend` (`{ name, defaultPlatformBridge, renderToJSON }`) under `backend.name`
+so it becomes selectable via `renderToDesignJSON(element, { backend: backend.name })`.
+
+### `getBackend(name)`
+
+Looks up a registered backend by name, throwing a helpful error (listing available backends) if
+it isn't registered.
+
+### `listBackends()`
+
+Returns the names of all currently registered backends (e.g. `['sketch', 'figma']`).
 
 ## Components
 

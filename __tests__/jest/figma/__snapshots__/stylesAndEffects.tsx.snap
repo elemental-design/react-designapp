@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Figma backend: borders, radius, shadows maps borderColor/borderWidth to strokes, borderRadius to cornerRadius, box-shadow to effects 1`] = `
+Object {
+  "componentSets": Object {},
+  "components": Object {},
+  "document": Object {
+    "children": Array [
+      Object {
+        "backgroundColor": Object {
+          "a": 1,
+          "b": 1,
+          "g": 1,
+          "r": 1,
+        },
+        "children": Array [
+          Object {
+            "absoluteBoundingBox": Object {
+              "height": 80,
+              "width": 120,
+              "x": 0,
+              "y": 0,
+            },
+            "absoluteRenderBounds": Object {
+              "height": 80,
+              "width": 120,
+              "x": 0,
+              "y": 0,
+            },
+            "blendMode": "PASS_THROUGH",
+            "constraints": Object {
+              "horizontal": "LEFT",
+              "vertical": "TOP",
+            },
+            "cornerRadius": 8,
+            "effects": Array [
+              Object {
+                "blendMode": "NORMAL",
+                "color": Object {
+                  "a": 0.5,
+                  "b": 0,
+                  "g": 0,
+                  "r": 0,
+                },
+                "offset": Object {
+                  "x": 0,
+                  "y": 4,
+                },
+                "radius": 10,
+                "spread": 0,
+                "type": "DROP_SHADOW",
+                "visible": true,
+              },
+            ],
+            "exportSettings": Array [],
+            "fillGeometry": Array [
+              Object {
+                "path": "M0 0L120 0L120 80L0 80L0 0Z",
+                "windingRule": "NONZERO",
+              },
+            ],
+            "fills": Array [
+              Object {
+                "blendMode": "NORMAL",
+                "color": Object {
+                  "a": 1,
+                  "b": 1,
+                  "g": 0.4,
+                  "r": 0.2,
+                },
+                "type": "SOLID",
+              },
+            ],
+            "id": "1:2",
+            "name": "Card",
+            "relativeTransform": Array [
+              Array [
+                1,
+                0,
+                0,
+              ],
+              Array [
+                0,
+                1,
+                0,
+              ],
+            ],
+            "scrollBehavior": "SCROLLS",
+            "size": Object {
+              "x": 120,
+              "y": 80,
+            },
+            "strokeAlign": "INSIDE",
+            "strokeGeometry": Array [],
+            "strokeWeight": 2,
+            "strokes": Array [
+              Object {
+                "blendMode": "NORMAL",
+                "color": Object {
+                  "a": 1,
+                  "b": 0,
+                  "g": 0,
+                  "r": 0,
+                },
+                "type": "SOLID",
+              },
+            ],
+            "type": "RECTANGLE",
+          },
+        ],
+        "exportSettings": Array [],
+        "flowStartingPoints": Array [],
+        "id": "0:1",
+        "name": "Page 1",
+        "prototypeDevice": Object {
+          "rotation": "NONE",
+          "type": "NONE",
+        },
+        "prototypeStartNodeID": null,
+        "scrollBehavior": "SCROLLS",
+        "type": "CANVAS",
+      },
+    ],
+    "id": "0:0",
+    "name": "Document",
+    "scrollBehavior": "SCROLLS",
+    "type": "DOCUMENT",
+  },
+  "editorType": "figma",
+  "lastModified": "2024-06-14T13:14:19Z",
+  "linkAccess": "inherit",
+  "name": "New File 1",
+  "role": "owner",
+  "schemaVersion": 0,
+  "styles": Object {},
+  "version": "0",
+}
+`;

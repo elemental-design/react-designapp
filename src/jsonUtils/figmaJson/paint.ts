@@ -65,35 +65,44 @@ const SHADOW_STYLES = [
   'textShadowSpread',
 ];
 
+function pickShadowProp<T>(
+  style: ViewStyle | TextStyle,
+  shadowProp: 'shadowColor' | 'shadowOpacity' | 'shadowRadius' | 'shadowSpread' | 'shadowOffset',
+  textShadowProp:
+    | 'textShadowColor'
+    | 'textShadowOpacity'
+    | 'textShadowRadius'
+    | 'textShadowSpread'
+    | 'textShadowOffset',
+  defaultValue: T,
+): T {
+  const value = (style as Record<string, unknown>)[shadowProp];
+  if (value !== undefined && value !== null) {
+    return value as T;
+  }
+  const textValue =
+    textShadowProp in style ? (style as Record<string, unknown>)[textShadowProp] : undefined;
+  if (textValue !== undefined && textValue !== null) {
+    return textValue as T;
+  }
+  return defaultValue;
+}
+
 export const makeEffects = (style: ViewStyle | TextStyle): FigmaEffect[] => {
   if (!hasAnyDefined(style, SHADOW_STYLES)) {
     return [];
   }
 
-  const color =
-    style.shadowColor ||
-    ('textShadowColor' in style && style.textShadowColor) ||
-    '#000';
-  const opacity =
-    style.shadowOpacity !== undefined && style.shadowOpacity !== null
-      ? style.shadowOpacity
-      : 'textShadowOpacity' in style && style.textShadowOpacity !== undefined
-      ? (style.textShadowOpacity as number)
-      : 1;
-  const radius =
-    style.shadowRadius !== undefined && style.shadowRadius !== null
-      ? style.shadowRadius
-      : 'textShadowRadius' in style && style.textShadowRadius !== undefined
-      ? (style.textShadowRadius as number)
-      : 1;
-  const spread =
-    style.shadowSpread !== undefined && style.shadowSpread !== null
-      ? style.shadowSpread
-      : 'textShadowSpread' in style && style.textShadowSpread !== undefined
-      ? (style.textShadowSpread as number)
-      : 0;
-  const offset =
-    style.shadowOffset || ('textShadowOffset' in style && style.textShadowOffset) || {};
+  const color = pickShadowProp(style, 'shadowColor', 'textShadowColor', '#000');
+  const opacity = pickShadowProp(style, 'shadowOpacity', 'textShadowOpacity', 1);
+  const radius = pickShadowProp(style, 'shadowRadius', 'textShadowRadius', 1);
+  const spread = pickShadowProp(style, 'shadowSpread', 'textShadowSpread', 0);
+  const offset = pickShadowProp<{ width?: number; height?: number }>(
+    style,
+    'shadowOffset',
+    'textShadowOffset',
+    {},
+  );
 
   return [
     {

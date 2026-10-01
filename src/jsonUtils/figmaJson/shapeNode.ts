@@ -62,7 +62,12 @@ export function buildShapeNode(
 
   if (isContainer) {
     const autoLayout = getAutoLayoutFields(style);
-    const resolvedFills = fills.length ? fills : forceFrame ? makeFills({ backgroundColor: 'white' }) : [];
+    // Artboards (forceFrame) default to a white background, matching the
+    // Sketch backend's artboard default, when no explicit fill is set.
+    let resolvedFills = fills;
+    if (!resolvedFills.length && forceFrame) {
+      resolvedFills = makeFills({ backgroundColor: 'white' });
+    }
 
     return {
       ...common,

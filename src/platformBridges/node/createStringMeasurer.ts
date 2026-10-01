@@ -14,7 +14,7 @@ const AVERAGE_CHAR_WIDTH_RATIO = 0.52;
 // Every 100 of font-weight above 400 nudges characters a bit wider.
 const WEIGHT_WIDTH_FACTOR = 0.00025;
 
-function charWidthRatio(fontSize: number, weight: number): number {
+function charWidthRatio(weight: number): number {
   const weightAdjustment = (weight - 400) * WEIGHT_WIDTH_FACTOR;
   return AVERAGE_CHAR_WIDTH_RATIO + weightAdjustment;
 }
@@ -23,7 +23,7 @@ function measureLineWidth(line: string, fontSize: number, weight: number, letter
   if (line.length === 0) {
     return 0;
   }
-  const ratio = charWidthRatio(fontSize, weight);
+  const ratio = charWidthRatio(weight);
   const glyphWidth = line.length * fontSize * ratio;
   const spacing = letterSpacing * Math.max(0, line.length - 1);
   return glyphWidth + spacing;

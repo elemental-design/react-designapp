@@ -10,9 +10,9 @@ function diffTextStyle(
 ): Partial<FigmaTextStyle> {
   const diff: Partial<FigmaTextStyle> = {};
 
-  (Object.keys(run) as (keyof FigmaTextStyle)[]).forEach((key) => {
+  (Object.keys(run) as (keyof FigmaTextStyle)[]).forEach(<K extends keyof FigmaTextStyle>(key: K) => {
     if (run[key] !== base[key]) {
-      (diff as any)[key] = run[key];
+      diff[key] = run[key];
     }
   });
 

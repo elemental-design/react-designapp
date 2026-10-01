@@ -51,6 +51,16 @@ plugin API doesn't support assigning custom ids to newly created nodes. These id
 as stable references within the generated JSON itself, e.g. for a future diff/update interface in
 the companion Figma plugin, but they do not correspond to real Figma-assigned node ids.
 
+### SVG handling
+
+Figma's REST file-format JSON has no official field for embedding raw SVG markup (its real
+`VECTOR` nodes represent geometry via `fillGeometry`/`strokeGeometry` path data, not SVG). Since
+there's no way to express vector geometry generically here, `<Svg>` trees are instead serialized
+back into a flat SVG string (the same string the Sketch backend already generates and feeds to
+its native `MSSVGImporter`) and placed on a `type: 'VECTOR'` node's `svg` field — a custom
+extension consumed by the companion Figma plugin, which turns it into real vector geometry via
+`figma.createNodeFromSvg(svg)`.
+
 ## Adding a new backend (e.g. Penpot)
 
 A backend is a plain object implementing `RenderBackend`:

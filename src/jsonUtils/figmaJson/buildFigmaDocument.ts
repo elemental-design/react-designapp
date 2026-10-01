@@ -2,6 +2,7 @@ import { TreeNode, TextNode as FlexTextNode } from '../../types';
 import { FigmaIdGenerator } from './idGenerator';
 import { buildShapeNode } from './shapeNode';
 import { buildTextNode } from './textNode';
+import { buildSvgNode } from './svgNode';
 import { toFigmaColor } from './colors';
 import { FigmaFile, FigmaNode, FigmaPage, FigmaRect } from './types';
 
@@ -19,6 +20,8 @@ function defaultNameForType(type: string): string {
       return 'Image';
     case 'sketch_text':
       return 'Text';
+    case 'sketch_svg':
+      return 'Svg';
     default:
       return 'Group';
   }
@@ -60,10 +63,11 @@ export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): Figma
   }
 
   if (node.type === 'sketch_svg') {
-    // SVGs aren't converted to native Figma vector geometry yet; render an
-    // empty placeholder frame so the walk doesn't need to special-case
-    // them upstream (and nothing throws).
-    return buildShapeNode(node, id, name, box, [], false);
+    // Serialize the SVG sub-tree back into a flat SVG string -- the same
+    // one the Sketch backend feeds to its native SVG importer -- and embed
+    // it on a VECTOR node for the companion Figma plugin to turn into real
+    // vector geometry (see `buildSvgNode`).
+    return buildSvgNode(node, id, name, box);
   }
 
   const childCtx: WalkContext = { idGen: ctx.idGen, absX, absY };

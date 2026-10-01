@@ -93,7 +93,19 @@ export type FigmaTextNode = FigmaNodeCommon & {
   lineIndentations: number[];
 };
 
-export type FigmaNode = FigmaFrameNode | FigmaRectangleNode | FigmaTextNode;
+// `VECTOR` is a real Figma REST node type, but the REST format represents
+// its geometry via `fillGeometry`/`strokeGeometry` path data, not raw SVG
+// markup. Since there's no official way to hand Figma a flat SVG string
+// through the file-format JSON, `svg` here is a **custom extension**
+// consumed by the companion Figma plugin (not part of Figma's own schema):
+// the plugin can create the real vector via `figma.createNodeFromSvg(svg)`
+// and reposition/rename it using this node's other (standard) fields.
+export type FigmaVectorNode = FigmaNodeCommon & {
+  type: 'VECTOR';
+  svg: string;
+};
+
+export type FigmaNode = FigmaFrameNode | FigmaRectangleNode | FigmaTextNode | FigmaVectorNode;
 
 export type FigmaPage = {
   id: string;

@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Figma backend: svg generates a VECTOR node carrying a flat SVG string 1`] = `
+Object {
+  "componentSets": Object {},
+  "components": Object {},
+  "document": Object {
+    "children": Array [
+      Object {
+        "backgroundColor": Object {
+          "a": 1,
+          "b": 1,
+          "g": 1,
+          "r": 1,
+        },
+        "children": Array [
+          Object {
+            "absoluteBoundingBox": Object {
+              "height": 32,
+              "width": 32,
+              "x": 0,
+              "y": 0,
+            },
+            "absoluteRenderBounds": Object {
+              "height": 32,
+              "width": 32,
+              "x": 0,
+              "y": 0,
+            },
+            "blendMode": "PASS_THROUGH",
+            "constraints": Object {
+              "horizontal": "LEFT",
+              "vertical": "TOP",
+            },
+            "effects": Array [],
+            "exportSettings": Array [],
+            "fillGeometry": Array [],
+            "fills": Array [],
+            "id": "1:2",
+            "name": "Icon",
+            "relativeTransform": Array [
+              Array [
+                1,
+                0,
+                0,
+              ],
+              Array [
+                0,
+                1,
+                0,
+              ],
+            ],
+            "scrollBehavior": "SCROLLS",
+            "size": Object {
+              "x": 32,
+              "y": 32,
+            },
+            "strokeAlign": "INSIDE",
+            "strokeGeometry": Array [],
+            "strokeWeight": 1,
+            "strokes": Array [],
+            "svg": "<svg name=\\"Icon\\" width=\\"32\\" height=\\"32\\" viewBox=\\"0 0 32 32\\" preserve-aspect-ratio=\\"xMidYMid meet\\" text-nodes=\\"\\" xmlns:xlink=\\"http://www.w3.org/1999/xlink\\">
+  <circle cx=\\"16\\" cy=\\"16\\" r=\\"15.5\\" stroke=\\"black\\"/>
+  <path fill-rule=\\"evenodd\\" clip-rule=\\"evenodd\\" d=\\"M17 8H15V15H8V17H15V24H17V17H24V15H17V8Z\\" fill=\\"black\\"/>
+</svg>
+",
+            "type": "VECTOR",
+          },
+        ],
+        "exportSettings": Array [],
+        "flowStartingPoints": Array [],
+        "id": "0:1",
+        "name": "Page 1",
+        "prototypeDevice": Object {
+          "rotation": "NONE",
+          "type": "NONE",
+        },
+        "prototypeStartNodeID": null,
+        "scrollBehavior": "SCROLLS",
+        "type": "CANVAS",
+      },
+    ],
+    "id": "0:0",
+    "name": "Document",
+    "scrollBehavior": "SCROLLS",
+    "type": "DOCUMENT",
+  },
+  "editorType": "figma",
+  "lastModified": "2024-06-14T13:14:19Z",
+  "linkAccess": "inherit",
+  "name": "New File 1",
+  "role": "owner",
+  "schemaVersion": 0,
+  "styles": Object {},
+  "version": "0",
+}
+`;

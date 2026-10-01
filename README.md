@@ -123,12 +123,15 @@ by the `sketch` backend when run inside Sketch) via the `platformBridge` option.
 #### Figma JSON output format
 
 The Figma backend outputs the same shape returned by Figma's `GET /v1/files/:key` REST endpoint:
-a `document` (`DOCUMENT` → `CANVAS` pages → nodes such as `FRAME`/`RECTANGLE`/`TEXT`), plus
+a `document` (`DOCUMENT` → `CANVAS` pages → nodes such as `FRAME`/`RECTANGLE`/`TEXT`/`VECTOR`), plus
 top-level `components`, `componentSets`, `styles`, `schemaVersion`, `name`, `version`, etc.
 Frames carry Figma auto-layout fields (`layoutMode`, `paddingLeft/Right/Top/Bottom`, `itemSpacing`,
 `primaryAxisAlignItems`, `counterAxisAlignItems`, `cornerRadius`, …) derived from your flexbox
 styles, and text nodes carry rich-text styling via `characterStyleOverrides` +
-`styleOverrideTable` when you nest `<Text>` spans with different styles.
+`styleOverrideTable` when you nest `<Text>` spans with different styles. `<Svg>` trees are
+serialized to a flat SVG string carried on a `VECTOR` node's `svg` field (a custom extension, since
+Figma's own file format has no raw-SVG field) for the companion plugin to turn into real vector
+geometry — see [Backends: SVG handling](docs/guides/backends.md#svg-handling) for details.
 
 Generated node ids (e.g. `"1:2"`) are a JSON-document-local addressing scheme only — Figma's
 plugin API does not allow assigning custom ids when creating real nodes. These generated ids are

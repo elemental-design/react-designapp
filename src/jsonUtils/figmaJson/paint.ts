@@ -1,4 +1,4 @@
-import { ViewStyle, TextStyle } from '../../types';
+import { ViewStyle, TextStyle, Color } from '../../types';
 import { hasAnyDefined } from '../../utils/hasAnyDefined';
 import { toFigmaColor } from './colors';
 import { FigmaEffect, FigmaPaint } from './types';
@@ -28,7 +28,13 @@ export const makeStrokes = (
   // pick the first edge that has *both* a color and a width defined, so we
   // never pair up a color and width from two different, possibly
   // mismatched edges (e.g. `borderTopColor` with `borderLeftWidth`).
-  const edges: Array<[unknown, unknown]> = [
+  type Edge = [Color | null | undefined, number | null | undefined];
+  const isCompleteEdge = (edge: Edge): edge is [Color, number] => {
+    const [color, width] = edge;
+    return Boolean(color) && Boolean(width);
+  };
+
+  const edges: Edge[] = [
     [style.borderColor, style.borderWidth],
     [style.borderTopColor, style.borderTopWidth],
     [style.borderRightColor, style.borderRightWidth],
@@ -36,9 +42,7 @@ export const makeStrokes = (
     [style.borderLeftColor, style.borderLeftWidth],
   ];
 
-  const match = edges.find(([color, width]) => color && width) as
-    | [string, number]
-    | undefined;
+  const match = edges.find(isCompleteEdge);
 
   if (!match) {
     return { strokes: [], strokeWeight: 1 };
@@ -48,7 +52,7 @@ export const makeStrokes = (
 
   return {
     strokes: [{ blendMode: 'NORMAL', type: 'SOLID', color: toFigmaColor(color) }],
-    strokeWeight: width as number,
+    strokeWeight: width,
   };
 };
 

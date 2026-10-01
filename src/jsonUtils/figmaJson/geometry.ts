@@ -7,7 +7,10 @@ import { isDefined } from '../../utils/isDefined';
 export const makeRectPath = (width: number, height: number): string =>
   `M0 0L${width} 0L${width} ${height}L0 ${height}L0 0Z`;
 
-const PRIMARY_AXIS_ALIGN: { [key: string]: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN' } = {
+type JustifyContent = 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around';
+type AlignItems = 'flex-start' | 'flex-end' | 'center' | 'stretch' | 'baseline';
+
+const PRIMARY_AXIS_ALIGN: Record<JustifyContent, 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BETWEEN'> = {
   'flex-start': 'MIN',
   center: 'CENTER',
   'flex-end': 'MAX',
@@ -15,7 +18,7 @@ const PRIMARY_AXIS_ALIGN: { [key: string]: 'MIN' | 'CENTER' | 'MAX' | 'SPACE_BET
   'space-around': 'SPACE_BETWEEN',
 };
 
-const COUNTER_AXIS_ALIGN: { [key: string]: 'MIN' | 'CENTER' | 'MAX' } = {
+const COUNTER_AXIS_ALIGN: Record<AlignItems, 'MIN' | 'CENTER' | 'MAX'> = {
   'flex-start': 'MIN',
   center: 'CENTER',
   'flex-end': 'MAX',
@@ -58,8 +61,8 @@ export const getAutoLayoutFields = (style: ViewStyleWithGap): AutoLayoutFields =
     paddingTop: style.paddingTop || 0,
     paddingBottom: style.paddingBottom || 0,
     itemSpacing: style.gap || 0,
-    primaryAxisAlignItems: PRIMARY_AXIS_ALIGN[style.justifyContent as string] || 'MIN',
-    counterAxisAlignItems: COUNTER_AXIS_ALIGN[style.alignItems as string] || 'MIN',
+    primaryAxisAlignItems: (style.justifyContent && PRIMARY_AXIS_ALIGN[style.justifyContent]) || 'MIN',
+    counterAxisAlignItems: (style.alignItems && COUNTER_AXIS_ALIGN[style.alignItems]) || 'MIN',
     layoutSizingHorizontal: isDefined(style.width) ? 'FIXED' : 'HUG',
     layoutSizingVertical: isDefined(style.height) ? 'FIXED' : 'HUG',
   };

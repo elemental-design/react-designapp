@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
 import { execFileSync } from 'child_process';
+import { URL } from 'url';
 
 // Pure JS re-implementation of the native `makeImageDataFromUrl` bridge
 // method (which, on macOS, uses NSData/NSImage/MSImageData). It supports:
@@ -46,15 +47,44 @@ function readLocalFile(url: string): Buffer | undefined {
   }
 }
 
+// Basic SSRF guard: rejects obviously-internal hosts (loopback, link-local
+// including the `169.254.169.254` cloud metadata address, and RFC1918
+// private ranges) before shelling out to `curl`. This is a best-effort,
+// literal-IP/hostname check -- it does not resolve DNS, so it cannot catch
+// DNS-rebinding attacks. Callers that accept image URLs from untrusted
+// input should perform additional validation (e.g. an allow-list) upstream.
+function isBlockedHost(hostname: string): boolean {
+  const host = hostname.toLowerCase();
+
+  if (host === 'localhost' || host === '::1' || host === '0.0.0.0') {
+    return true;
+  }
+
+  const ipv4Match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(host);
+  if (!ipv4Match) {
+    return false;
+  }
+
+  const [a, b] = ipv4Match.slice(1, 3).map(Number);
+  return (
+    a === 127 || // loopback
+    a === 10 || // 10.0.0.0/8
+    (a === 172 && b >= 16 && b <= 31) || // 172.16.0.0/12
+    (a === 192 && b === 168) || // 192.168.0.0/16
+    (a === 169 && b === 254) // 169.254.0.0/16 (incl. cloud metadata)
+  );
+}
+
 function readRemoteURL(url: string): Buffer | undefined {
   try {
+    const { hostname } = new URL(url);
+    if (isBlockedHost(hostname)) {
+      return undefined;
+    }
+
     // `url` is only reached here after `/^https?:\/\//.test(url)` above, so
     // it can never start with `-`/`--`, ruling out curl flag injection via
-    // the URL argument. Fetching arbitrary attacker-controlled URLs is an
-    // inherent, intentional part of this API (mirrors `<Image source={{uri}}
-    // />` and the native bridge's `makeImageDataFromUrl`, both of which also
-    // fetch whatever URL the caller supplies) -- callers should only pass
-    // trusted/validated URLs, same as the existing native bridge.
+    // the URL argument.
     // execFileSync keeps this synchronous, matching the bridge interface.
     // `curl` is available on virtually every CI/dev machine; if it's
     // missing this simply falls through to the error-image placeholder.

@@ -12,12 +12,12 @@ export const makeFills = (style: ViewStyle | TextStyle): FigmaPaint[] => {
     {
       blendMode: 'NORMAL',
       type: 'SOLID',
-      color: toFigmaColor(style.backgroundColor, isDefinedOpacity(style)),
+      color: toFigmaColor(style.backgroundColor, resolveOpacity(style)),
     },
   ];
 };
 
-function isDefinedOpacity(style: ViewStyle | TextStyle): number {
+function resolveOpacity(style: ViewStyle | TextStyle): number {
   return style.opacity !== undefined && style.opacity !== null ? style.opacity : 1;
 }
 

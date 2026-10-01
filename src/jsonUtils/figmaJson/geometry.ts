@@ -36,10 +36,16 @@ export type AutoLayoutFields = {
   layoutSizingVertical: 'FIXED' | 'HUG';
 };
 
+// `gap` isn't part of react-sketchapp's style surface for Sketch (and is
+// ignored by Yoga/the Sketch backend, which only reads a fixed whitelist of
+// style keys), but it's the natural way to express Figma's `itemSpacing`
+// for auto-layout frames, so the Figma backend reads it as an extension.
+export type ViewStyleWithGap = ViewStyle & { gap?: number };
+
 // Maps the subset of flexbox styling that react-sketchapp already resolves
 // through Yoga (padding, gap, flex-direction, justify/align) onto Figma's
 // auto-layout node properties.
-export const getAutoLayoutFields = (style: ViewStyle): AutoLayoutFields => {
+export const getAutoLayoutFields = (style: ViewStyleWithGap): AutoLayoutFields => {
   const layoutMode: 'HORIZONTAL' | 'VERTICAL' =
     style.flexDirection === 'row' || style.flexDirection === 'row-reverse'
       ? 'HORIZONTAL'
@@ -51,10 +57,7 @@ export const getAutoLayoutFields = (style: ViewStyle): AutoLayoutFields => {
     paddingRight: style.paddingRight || 0,
     paddingTop: style.paddingTop || 0,
     paddingBottom: style.paddingBottom || 0,
-    // `gap` isn't part of react-sketchapp's style surface for Sketch (and is
-    // ignored by Yoga/the Sketch backend), but it's the natural way to
-    // express Figma's `itemSpacing` for auto-layout frames.
-    itemSpacing: (style as any).gap || 0,
+    itemSpacing: style.gap || 0,
     primaryAxisAlignItems: PRIMARY_AXIS_ALIGN[style.justifyContent as string] || 'MIN',
     counterAxisAlignItems: COUNTER_AXIS_ALIGN[style.alignItems as string] || 'MIN',
     layoutSizingHorizontal: isDefined(style.width) ? 'FIXED' : 'HUG',

@@ -1,0 +1,17 @@
+{
+  "name": "profile-cards-figma",
+  "private": true,
+  "description": "Headless Figma-backend rendering of the Profile Cards example; outputs Figma file-format JSON to profile-cards-figma.json.",
+  "scripts": {
+    "build-lib": "npm run build:main --prefix ../.. || true",
+    "generate": "npm run build-lib && node -r @babel/register src/main.js"
+  },
+  "author": "Jon Gold <jon.gold@airbnb.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0"
+  }
+}

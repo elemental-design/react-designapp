@@ -10,6 +10,13 @@ export type FigmaPaint = {
   color?: FigmaColor;
   scaleMode?: 'FILL' | 'FIT' | 'CROP' | 'TILE';
   imageRef?: string;
+  // `imageData` (base64) is a custom, non-standard extension, analogous to
+  // `FigmaVectorNode.svg` below: real Figma REST `IMAGE` paints reference
+  // bytes via `imageRef` (a hash resolved through a separate images
+  // endpoint), which isn't available in this headless, API-less pipeline.
+  // The companion Figma plugin reads this field directly, e.g. via
+  // `figma.createImage(...)`, to materialize the fill.
+  imageData?: string;
 };
 
 export type FigmaGeometry = { path: string; windingRule: 'NONZERO' | 'EVENODD' };

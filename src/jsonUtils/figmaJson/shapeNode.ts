@@ -1,6 +1,7 @@
-import { TreeNode } from '../../types';
+import { PlatformBridge, TreeNode } from '../../types';
 import { makeRectPath, getAutoLayoutFields } from './geometry';
 import { makeFills, makeStrokes, makeEffects } from './paint';
+import { makeImageFills } from './imagePaint';
 import { FigmaFrameNode, FigmaNode, FigmaRect, FigmaRectangleNode } from './types';
 
 // Builds the FRAME (container, has auto-layout fields + children) or
@@ -13,9 +14,11 @@ export function buildShapeNode(
   box: FigmaRect,
   children: FigmaNode[],
   forceFrame: boolean,
+  platformBridge: PlatformBridge,
 ): FigmaFrameNode | FigmaRectangleNode {
   const { layout, style } = node;
-  const fills = makeFills(style);
+  const fills =
+    node.type === 'sketch_image' ? makeImageFills(node, platformBridge) : makeFills(style);
   const { strokes, strokeWeight } = makeStrokes(style);
   const effects = makeEffects(style);
   // `borderRadius` is a shorthand that `expandStyle` already expands into

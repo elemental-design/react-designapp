@@ -61,6 +61,15 @@ its native `MSSVGImporter`) and placed on a `type: 'VECTOR'` node's `svg` field 
 extension consumed by the companion Figma plugin, which turns it into real vector geometry via
 `figma.createNodeFromSvg(svg)`.
 
+### Image handling
+
+Similarly, real Figma `IMAGE` paints reference bytes via an `imageRef` hash resolved through a
+separate (networked) images endpoint, which doesn't exist in this headless, API-less pipeline.
+`<Image>` fills are instead resolved the same way the Sketch backend resolves them (the
+`PlatformBridge`'s `makeImageDataFromUrl`, supporting `data:` URIs, local files, and `http(s)://`
+URLs) and embedded directly as base64 on the paint's custom `imageData` field — consumed by the
+companion Figma plugin, e.g. via `figma.createImage(...)`.
+
 ## Adding a new backend (e.g. Penpot)
 
 A backend is a plain object implementing `RenderBackend`:

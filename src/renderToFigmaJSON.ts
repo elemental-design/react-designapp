@@ -17,5 +17,5 @@ export const renderToFigmaJSON = (platformBridge: PlatformBridge = NodeBridge) =
   options?: RenderToFigmaJSONOptions,
 ): FigmaFile => {
   const tree = buildTree(platformBridge)(element);
-  return buildFigmaDocument(tree, options);
+  return buildFigmaDocument(tree, options, platformBridge);
 };

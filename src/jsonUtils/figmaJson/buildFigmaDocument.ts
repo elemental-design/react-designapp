@@ -1,15 +1,17 @@
-import { TreeNode, TextNode as FlexTextNode } from '../../types';
+import { PlatformBridge, TreeNode, TextNode as FlexTextNode } from '../../types';
 import { FigmaIdGenerator } from './idGenerator';
 import { buildShapeNode } from './shapeNode';
 import { buildTextNode } from './textNode';
 import { buildSvgNode } from './svgNode';
 import { toFigmaColor } from './colors';
 import { FigmaFile, FigmaNode, FigmaPage, FigmaRect } from './types';
+import NodeBridge from '../../platformBridges/node';
 
 type WalkContext = {
   idGen: FigmaIdGenerator;
   absX: number;
   absY: number;
+  platformBridge: PlatformBridge;
 };
 
 function defaultNameForType(type: string): string {
@@ -70,17 +72,21 @@ export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): Figma
     return buildSvgNode(node, id, name, box);
   }
 
-  const childCtx: WalkContext = { idGen: ctx.idGen, absX, absY };
+  const childCtx: WalkContext = { idGen: ctx.idGen, absX, absY, platformBridge: ctx.platformBridge };
   const children = (node.children || [])
     .map((child) => buildFigmaNode(child, childCtx))
     .filter((child): child is FigmaNode => child !== null);
 
   const forceFrame = node.type === 'sketch_artboard';
 
-  return buildShapeNode(node, id, name, box, children, forceFrame);
+  return buildShapeNode(node, id, name, box, children, forceFrame, ctx.platformBridge);
 }
 
-function buildFigmaPage(pageTree: TreeNode, pageNumber: number): FigmaPage {
+function buildFigmaPage(
+  pageTree: TreeNode,
+  pageNumber: number,
+  platformBridge: PlatformBridge,
+): FigmaPage {
   const idGen = new FigmaIdGenerator(pageNumber);
   const backgroundColor =
     pageTree.style && pageTree.style.backgroundColor
@@ -88,7 +94,7 @@ function buildFigmaPage(pageTree: TreeNode, pageNumber: number): FigmaPage {
       : { r: 1, g: 1, b: 1, a: 1 };
 
   const children = (pageTree.children || [])
-    .map((child) => buildFigmaNode(child, { idGen, absX: 0, absY: 0 }))
+    .map((child) => buildFigmaNode(child, { idGen, absX: 0, absY: 0, platformBridge }))
     .filter((child): child is FigmaNode => child !== null);
 
   return {
@@ -122,6 +128,7 @@ export type RenderToFigmaJSONOptions = {
 export function buildFigmaDocument(
   tree: TreeNode,
   options: RenderToFigmaJSONOptions = {},
+  platformBridge: PlatformBridge = NodeBridge,
 ): FigmaFile {
   let pageTrees: TreeNode[];
 
@@ -148,7 +155,9 @@ export function buildFigmaDocument(
     ];
   }
 
-  const pages = pageTrees.map((pageTree, index) => buildFigmaPage(pageTree, index + 1));
+  const pages = pageTrees.map((pageTree, index) =>
+    buildFigmaPage(pageTree, index + 1, platformBridge),
+  );
 
   return {
     document: {

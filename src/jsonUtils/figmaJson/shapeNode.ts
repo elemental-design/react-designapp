@@ -21,15 +21,21 @@ export function buildShapeNode(
   // `borderRadius` is a shorthand that `expandStyle` already expands into
   // the 4 individual corner props (see ViewRenderer / ImageRenderer, which
   // do the same destructuring for the Sketch backend); Figma's
-  // `cornerRadius` only supports a single uniform radius, so fall back to
-  // the top-left corner when all four aren't equal.
+  // `cornerRadius` only supports a single uniform radius (per-corner radii
+  // would need `rectangleCornerRadii`, which isn't implemented here), so we
+  // fall back to the largest corner value when they aren't all equal.
   const {
     borderTopLeftRadius = 0,
     borderTopRightRadius = 0,
     borderBottomRightRadius = 0,
     borderBottomLeftRadius = 0,
   } = style;
-  const cornerRadius = borderTopLeftRadius || borderTopRightRadius || borderBottomRightRadius || borderBottomLeftRadius || 0;
+  const cornerRadius = Math.max(
+    borderTopLeftRadius || 0,
+    borderTopRightRadius || 0,
+    borderBottomRightRadius || 0,
+    borderBottomLeftRadius || 0,
+  );
 
   const common = {
     id,

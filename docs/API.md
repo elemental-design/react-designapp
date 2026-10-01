@@ -122,7 +122,7 @@ A function `(element, options?) => FigmaFile` producing the Figma document JSON.
 #### Example
 
 ```js
-import { renderToFigmaJSON } from 'react-sketchapp2';
+import { renderToFigmaJSON } from 'react-sketchapp';
 
 const figmaFile = renderToFigmaJSON()(<App />);
 ```
@@ -152,7 +152,7 @@ The backend-specific JSON output (Sketch file JSON or Figma file JSON).
 #### Example
 
 ```js
-import { renderToDesignJSON } from 'react-sketchapp2';
+import { renderToDesignJSON } from 'react-sketchapp';
 
 const figmaFile = renderToDesignJSON(<App />, { backend: 'figma' });
 const sketchFile = renderToDesignJSON(<App />, { backend: 'sketch' });
@@ -161,7 +161,7 @@ const sketchFile = renderToDesignJSON(<App />, { backend: 'sketch' });
 ## Backends
 
 The core reconciler/layout engine builds a design-app-neutral intermediate tree, which is then
-converted to a native output format by a **backend**. `react-sketchapp2` ships `sketch` and
+converted to a native output format by a **backend**. `react-sketchapp` ships `sketch` and
 `figma` backends, registered by default, and exposes a small registry so additional backends
 (e.g. a future Penpot backend) can be added without changing the core.
 

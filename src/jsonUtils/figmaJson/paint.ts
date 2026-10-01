@@ -24,26 +24,31 @@ function isDefinedOpacity(style: ViewStyle | TextStyle): number {
 export const makeStrokes = (
   style: ViewStyle,
 ): { strokes: FigmaPaint[]; strokeWeight: number } => {
-  const color =
-    style.borderColor ||
-    style.borderTopColor ||
-    style.borderRightColor ||
-    style.borderBottomColor ||
-    style.borderLeftColor;
-  const width =
-    style.borderWidth ||
-    style.borderTopWidth ||
-    style.borderRightWidth ||
-    style.borderBottomWidth ||
-    style.borderLeftWidth;
+  // Prefer the uniform shorthand (`borderColor`/`borderWidth`). Otherwise,
+  // pick the first edge that has *both* a color and a width defined, so we
+  // never pair up a color and width from two different, possibly
+  // mismatched edges (e.g. `borderTopColor` with `borderLeftWidth`).
+  const edges: Array<[unknown, unknown]> = [
+    [style.borderColor, style.borderWidth],
+    [style.borderTopColor, style.borderTopWidth],
+    [style.borderRightColor, style.borderRightWidth],
+    [style.borderBottomColor, style.borderBottomWidth],
+    [style.borderLeftColor, style.borderLeftWidth],
+  ];
 
-  if (!color || !width) {
+  const match = edges.find(([color, width]) => color && width) as
+    | [string, number]
+    | undefined;
+
+  if (!match) {
     return { strokes: [], strokeWeight: 1 };
   }
 
+  const [color, width] = match;
+
   return {
     strokes: [{ blendMode: 'NORMAL', type: 'SOLID', color: toFigmaColor(color) }],
-    strokeWeight: width,
+    strokeWeight: width as number,
   };
 };
 

@@ -48,10 +48,17 @@ function readLocalFile(url: string): Buffer | undefined {
 
 function readRemoteURL(url: string): Buffer | undefined {
   try {
+    // `url` is only reached here after `/^https?:\/\//.test(url)` above, so
+    // it can never start with `-`/`--`, ruling out curl flag injection via
+    // the URL argument. Fetching arbitrary attacker-controlled URLs is an
+    // inherent, intentional part of this API (mirrors `<Image source={{uri}}
+    // />` and the native bridge's `makeImageDataFromUrl`, both of which also
+    // fetch whatever URL the caller supplies) -- callers should only pass
+    // trusted/validated URLs, same as the existing native bridge.
     // execFileSync keeps this synchronous, matching the bridge interface.
     // `curl` is available on virtually every CI/dev machine; if it's
     // missing this simply falls through to the error-image placeholder.
-    return execFileSync('curl', ['-sL', '--max-time', '5', url], {
+    return execFileSync('curl', ['-sL', '--max-time', '5', '--', url], {
       maxBuffer: 1024 * 1024 * 10,
     });
   } catch (err) {

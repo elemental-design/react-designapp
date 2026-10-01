@@ -59,7 +59,7 @@ Found a novel use? We'd love to hear about it!
 
 ## Backends
 
-`react-sketchapp2` renders your React tree into a design-app-neutral intermediate tree (pages,
+`react-sketchapp` renders your React tree into a design-app-neutral intermediate tree (pages,
 frames, shapes, text with style runs, fills, strokes, effects, auto-layout, etc.) and then hands
 that tree to a **backend** that converts it to a native output format. Backend selection is
 explicit, and new backends can be registered without touching the core reconciler/layout code.
@@ -75,7 +75,7 @@ Two backends ship today:
 ### Using the Sketch backend (unchanged)
 
 ```js
-import { render, renderToJSON, Text, Artboard } from 'react-sketchapp2';
+import { render, renderToJSON, Text, Artboard } from 'react-sketchapp';
 
 export default context => {
   render(<App message="Hello world!" />, context.document.currentPage());
@@ -86,7 +86,7 @@ export default context => {
 
 ```js
 import * as React from 'react';
-import { renderToJSON, Text, Artboard } from 'react-sketchapp2/figma';
+import { renderToJSON, Text, Artboard } from 'react-sketchapp/figma';
 
 const App = () => (
   <Artboard name="Page 1">
@@ -101,7 +101,7 @@ const figmaFileJSON = renderToJSON(<App />);
 Or, from the main package, using `renderToFigmaJSON` directly:
 
 ```js
-import { renderToFigmaJSON } from 'react-sketchapp2';
+import { renderToFigmaJSON } from 'react-sketchapp';
 
 const figmaFileJSON = renderToFigmaJSON()(<App />);
 ```
@@ -109,7 +109,7 @@ const figmaFileJSON = renderToFigmaJSON()(<App />);
 You can also pick a backend explicitly through a single, generic entry point:
 
 ```js
-import { renderToDesignJSON } from 'react-sketchapp2';
+import { renderToDesignJSON } from 'react-sketchapp';
 
 const json = renderToDesignJSON(<App />, { backend: 'figma' }); // or 'sketch'
 ```
@@ -150,7 +150,7 @@ type RenderBackend<Json, Options> = {
 and register themselves with the backend registry (`src/backends/registry.ts`):
 
 ```ts
-import { registerBackend } from 'react-sketchapp2';
+import { registerBackend } from 'react-sketchapp';
 
 registerBackend({
   name: 'penpot',

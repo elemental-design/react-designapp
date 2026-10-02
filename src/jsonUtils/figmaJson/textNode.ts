@@ -4,10 +4,7 @@ import { makeFills } from './paint';
 import { toFigmaColor } from './colors';
 import { FigmaRect, FigmaTextNode, FigmaTextStyle } from './types';
 
-function diffTextStyle(
-  base: FigmaTextStyle,
-  run: FigmaTextStyle,
-): Partial<FigmaTextStyle> {
+function diffTextStyle(base: FigmaTextStyle, run: FigmaTextStyle): Partial<FigmaTextStyle> {
   const diff: Partial<FigmaTextStyle> = {};
 
   // `FigmaTextStyle`'s fields are all primitives (string/number/boolean), so
@@ -16,11 +13,13 @@ function diffTextStyle(
   // would become referential rather than deep and could report false
   // differences for deeply-equal values -- switch to a deep-equal check at
   // that point.
-  (Object.keys(run) as (keyof FigmaTextStyle)[]).forEach(<K extends keyof FigmaTextStyle>(key: K) => {
-    if (run[key] !== base[key]) {
-      diff[key] = run[key];
-    }
-  });
+  (Object.keys(run) as (keyof FigmaTextStyle)[]).forEach(
+    <K extends keyof FigmaTextStyle>(key: K) => {
+      if (run[key] !== base[key]) {
+        diff[key] = run[key];
+      }
+    },
+  );
 
   return diff;
 }
@@ -96,13 +95,19 @@ export function buildTextNode(
     blendMode: 'PASS_THROUGH',
     absoluteBoundingBox: box,
     absoluteRenderBounds: box,
-    constraints: { vertical: 'TOP', horizontal: 'LEFT' },
+    constraints: { vertical: 'MIN', horizontal: 'MIN' },
     relativeTransform: [
       [1, 0, node.layout.left],
       [0, 1, node.layout.top],
     ],
+    x: node.layout.left,
+    y: node.layout.top,
+    width: node.layout.width,
+    height: node.layout.height,
     size: { x: node.layout.width, y: node.layout.height },
-    fills: fills.length ? fills : [{ blendMode: 'NORMAL', type: 'SOLID', color: toFigmaColor('black') }],
+    fills: fills.length
+      ? fills
+      : [{ blendMode: 'NORMAL', type: 'SOLID', color: toFigmaColor('black') }],
     fillGeometry: [],
     strokes: [],
     strokeWeight: 1,

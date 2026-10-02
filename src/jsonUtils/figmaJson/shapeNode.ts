@@ -2,6 +2,7 @@ import { PlatformBridge, TreeNode } from '../../types';
 import { makeRectPath, getAutoLayoutFields } from './geometry';
 import { makeFills, makeStrokes, makeEffects } from './paint';
 import { makeImageFills } from './imagePaint';
+import { resolveRadii } from '../../utils/resolveRadius';
 import { FigmaFrameNode, FigmaNode, FigmaRect, FigmaRectangleNode } from './types';
 
 // Builds the FRAME (container, has auto-layout fields + children) or
@@ -15,6 +16,7 @@ export function buildShapeNode(
   children: FigmaNode[],
   forceFrame: boolean,
   platformBridge: PlatformBridge,
+  autoLayout = false,
 ): FigmaFrameNode | FigmaRectangleNode {
   const { layout, style } = node;
   const fills =
@@ -27,18 +29,7 @@ export function buildShapeNode(
   // `cornerRadius` only supports a single uniform radius (per-corner radii
   // would need `rectangleCornerRadii`, which isn't implemented here), so we
   // fall back to the largest corner value when they aren't all equal.
-  const {
-    borderTopLeftRadius = 0,
-    borderTopRightRadius = 0,
-    borderBottomRightRadius = 0,
-    borderBottomLeftRadius = 0,
-  } = style;
-  const cornerRadius = Math.max(
-    borderTopLeftRadius || 0,
-    borderTopRightRadius || 0,
-    borderBottomRightRadius || 0,
-    borderBottomLeftRadius || 0,
-  );
+  const cornerRadius = Math.max(...resolveRadii(style, layout.width, layout.height));
 
   const common = {
     id,
@@ -47,11 +38,15 @@ export function buildShapeNode(
     blendMode: 'PASS_THROUGH' as const,
     absoluteBoundingBox: box,
     absoluteRenderBounds: box,
-    constraints: { vertical: 'TOP' as const, horizontal: 'LEFT' as const },
+    constraints: { vertical: 'MIN' as const, horizontal: 'MIN' as const },
     relativeTransform: [
       [1, 0, layout.left],
       [0, 1, layout.top],
     ] as [[number, number, number], [number, number, number]],
+    x: layout.left,
+    y: layout.top,
+    width: layout.width,
+    height: layout.height,
     size: { x: layout.width, y: layout.height },
     strokes,
     strokeWeight,
@@ -64,7 +59,9 @@ export function buildShapeNode(
   const isContainer = forceFrame || children.length > 0;
 
   if (isContainer) {
-    const autoLayout = getAutoLayoutFields(style);
+    const autoLayoutFields = autoLayout
+      ? getAutoLayoutFields(style)
+      : { ...getAutoLayoutFields(style), layoutMode: 'NONE' as const };
     // Artboards (forceFrame) default to a white background, matching the
     // Sketch backend's artboard default, when no explicit fill is set.
     let resolvedFills = fills;
@@ -77,7 +74,7 @@ export function buildShapeNode(
       type: 'FRAME',
       fills: resolvedFills,
       fillGeometry: [],
-      ...autoLayout,
+      ...autoLayoutFields,
       cornerRadius,
       clipsContent: style.overflow === 'hidden' || style.overflow === 'scroll',
       backgrounds: resolvedFills,

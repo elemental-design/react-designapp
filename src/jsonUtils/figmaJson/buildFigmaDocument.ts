@@ -12,6 +12,7 @@ type WalkContext = {
   absX: number;
   absY: number;
   platformBridge: PlatformBridge;
+  autoLayout: boolean;
 };
 
 function defaultNameForType(type: string): string {
@@ -72,20 +73,36 @@ export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): Figma
     return buildSvgNode(node, id, name, box);
   }
 
-  const childCtx: WalkContext = { idGen: ctx.idGen, absX, absY, platformBridge: ctx.platformBridge };
+  const childCtx: WalkContext = {
+    idGen: ctx.idGen,
+    absX,
+    absY,
+    platformBridge: ctx.platformBridge,
+    autoLayout: ctx.autoLayout,
+  };
   const children = (node.children || [])
     .map((child) => buildFigmaNode(child, childCtx))
     .filter((child): child is FigmaNode => child !== null);
 
   const forceFrame = node.type === 'sketch_artboard';
 
-  return buildShapeNode(node, id, name, box, children, forceFrame, ctx.platformBridge);
+  return buildShapeNode(
+    node,
+    id,
+    name,
+    box,
+    children,
+    forceFrame,
+    ctx.platformBridge,
+    ctx.autoLayout,
+  );
 }
 
 function buildFigmaPage(
   pageTree: TreeNode,
   pageNumber: number,
   platformBridge: PlatformBridge,
+  autoLayout: boolean,
 ): FigmaPage {
   const idGen = new FigmaIdGenerator(pageNumber);
   const backgroundColor =
@@ -94,13 +111,13 @@ function buildFigmaPage(
       : { r: 1, g: 1, b: 1, a: 1 };
 
   const children = (pageTree.children || [])
-    .map((child) => buildFigmaNode(child, { idGen, absX: 0, absY: 0, platformBridge }))
+    .map((child) => buildFigmaNode(child, { idGen, absX: 0, absY: 0, platformBridge, autoLayout }))
     .filter((child): child is FigmaNode => child !== null);
 
   return {
     id: `0:${pageNumber}`,
     name: (pageTree.props && pageTree.props.name) || `Page ${pageNumber}`,
-    type: 'CANVAS',
+    type: 'PAGE',
     scrollBehavior: 'SCROLLS',
     children,
     backgroundColor,
@@ -115,6 +132,9 @@ export type RenderToFigmaJSONOptions = {
   name?: string;
   lastModified?: string;
   version?: string;
+  // Emit Figma auto layout on frames. Off by default: Figma auto layout has no
+  // per-child margins, so the Yoga-computed absolute positions are used instead.
+  autoLayout?: boolean;
 };
 
 // Builds the full Figma file-format JSON document (`{ document, components,
@@ -156,7 +176,7 @@ export function buildFigmaDocument(
   }
 
   const pages = pageTrees.map((pageTree, index) =>
-    buildFigmaPage(pageTree, index + 1, platformBridge),
+    buildFigmaPage(pageTree, index + 1, platformBridge, options.autoLayout === true),
   );
 
   return {

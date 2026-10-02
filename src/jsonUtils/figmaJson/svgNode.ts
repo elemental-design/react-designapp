@@ -9,7 +9,12 @@ import { FigmaRect, FigmaVectorNode } from './types';
 // companion Figma plugin is expected to turn `svg` into real vector
 // geometry (e.g. via `figma.createNodeFromSvg`) and position it using this
 // node's standard bounding-box/transform fields.
-export function buildSvgNode(node: TreeNode, id: string, name: string, box: FigmaRect): FigmaVectorNode {
+export function buildSvgNode(
+  node: TreeNode,
+  id: string,
+  name: string,
+  box: FigmaRect,
+): FigmaVectorNode {
   const { layout, props, children, style } = node;
 
   // add the "xmlns:xlink" namespace so we can use `href`, matching the
@@ -32,11 +37,15 @@ export function buildSvgNode(node: TreeNode, id: string, name: string, box: Figm
     blendMode: 'PASS_THROUGH',
     absoluteBoundingBox: box,
     absoluteRenderBounds: box,
-    constraints: { vertical: 'TOP', horizontal: 'LEFT' },
+    constraints: { vertical: 'MIN', horizontal: 'MIN' },
     relativeTransform: [
       [1, 0, layout.left],
       [0, 1, layout.top],
     ],
+    x: layout.left,
+    y: layout.top,
+    width: layout.width,
+    height: layout.height,
     size: { x: layout.width, y: layout.height },
     fills: [],
     fillGeometry: [],

@@ -105,7 +105,11 @@ export const buildTree = (bridge: PlatformBridge) => (element: React.ReactElemen
     throw new Error('Cannot access react renderer');
   }
 
-  const json = renderer.toJSON();
+  const rendered = renderer.toJSON();
+  if (!rendered) {
+    throw new Error('Cannot render react element');
+  }
+  const json = Array.isArray(rendered) ? rendered[0] : rendered;
   if (!json) {
     throw new Error('Cannot render react element');
   }

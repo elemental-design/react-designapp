@@ -54,8 +54,15 @@ export type FigmaNodeCommon = {
   blendMode: 'PASS_THROUGH';
   absoluteBoundingBox: FigmaRect;
   absoluteRenderBounds: FigmaRect;
-  constraints: { vertical: 'TOP'; horizontal: 'LEFT' };
+  constraints: {
+    vertical: 'MIN' | 'CENTER' | 'MAX' | 'STRETCH' | 'SCALE';
+    horizontal: 'MIN' | 'CENTER' | 'MAX' | 'STRETCH' | 'SCALE';
+  };
   relativeTransform: [[number, number, number], [number, number, number]];
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   size: FigmaVector;
   fills: FigmaPaint[];
   fillGeometry: FigmaGeometry[];
@@ -117,7 +124,7 @@ export type FigmaNode = FigmaFrameNode | FigmaRectangleNode | FigmaTextNode | Fi
 export type FigmaPage = {
   id: string;
   name: string;
-  type: 'CANVAS';
+  type: 'PAGE';
   scrollBehavior: 'SCROLLS';
   children: FigmaNode[];
   backgroundColor: FigmaColor;

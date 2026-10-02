@@ -9,14 +9,30 @@ import { resolveFontWeight } from './findFontName';
 // for running the renderer in plain Node.js (CI, tests, server-side
 // generation) without any native dependency.
 
-// Average glyph width as a ratio of font size, for a "regular" weight.
-const AVERAGE_CHAR_WIDTH_RATIO = 0.52;
+// Average glyph advance as a ratio of font size, for a "regular" weight.
+// Calibrated against real macOS (NSLayoutManager) measurements: e.g. a 152-char
+// mixed-case English string in Georgia 16 measures 1104pt wide => ~0.454.
+const AVERAGE_CHAR_WIDTH_RATIO = 0.46;
 // Every 100 of font-weight above 400 nudges characters a bit wider.
 const WEIGHT_WIDTH_FACTOR = 0.00025;
+// Approximate advance of an emoji (or other non-BMP/wide symbol) as a ratio of
+// font size. Emojis are rendered roughly square, so ~1.0 is close; counting
+// them by UTF-16 code units instead would double-count them and inflate line
+// widths (and therefore wrap counts).
+const EMOJI_CHAR_WIDTH_RATIO = 1.0;
 
 function charWidthRatio(weight: number): number {
   const weightAdjustment = (weight - 400) * WEIGHT_WIDTH_FACTOR;
   return AVERAGE_CHAR_WIDTH_RATIO + weightAdjustment;
+}
+
+// Surrogate pair or variation-selector sequence => an emoji/symbol glyph.
+function isWideCodePoint(codePoint: number): boolean {
+  return (
+    codePoint > 0xffff ||
+    (codePoint >= 0x2600 && codePoint <= 0x27bf) || // misc symbols & dingbats
+    (codePoint >= 0x2190 && codePoint <= 0x2bff) // arrows, misc technical, etc.
+  );
 }
 
 function measureLineWidth(line: string, fontSize: number, weight: number, letterSpacing: number) {
@@ -24,13 +40,30 @@ function measureLineWidth(line: string, fontSize: number, weight: number, letter
     return 0;
   }
   const ratio = charWidthRatio(weight);
-  const glyphWidth = line.length * fontSize * ratio;
-  const spacing = letterSpacing * Math.max(0, line.length - 1);
+  // Measure in code points (not UTF-16 units) so emoji count once, not twice.
+  const segments = Array.from(line);
+  let glyphWidth = 0;
+  segments.forEach((segment) => {
+    const codePoint = segment.codePointAt(0) as number;
+    const segmentRatio = isWideCodePoint(codePoint) ? EMOJI_CHAR_WIDTH_RATIO : ratio;
+    glyphWidth += fontSize * segmentRatio;
+  });
+  const spacing = letterSpacing * Math.max(0, segments.length - 1);
   return glyphWidth + spacing;
 }
 
-function wrapLine(line: string, fontSize: number, weight: number, letterSpacing: number, maxWidth: number): string[] {
-  if (!Number.isFinite(maxWidth) || maxWidth <= 0 || measureLineWidth(line, fontSize, weight, letterSpacing) <= maxWidth) {
+function wrapLine(
+  line: string,
+  fontSize: number,
+  weight: number,
+  letterSpacing: number,
+  maxWidth: number,
+): string[] {
+  if (
+    !Number.isFinite(maxWidth) ||
+    maxWidth <= 0 ||
+    measureLineWidth(line, fontSize, weight, letterSpacing) <= maxWidth
+  ) {
     return [line];
   }
 
@@ -40,7 +73,10 @@ function wrapLine(line: string, fontSize: number, weight: number, letterSpacing:
 
   words.forEach((word) => {
     const candidate = current.length === 0 ? word : `${current} ${word}`;
-    if (measureLineWidth(candidate, fontSize, weight, letterSpacing) > maxWidth && current.length > 0) {
+    if (
+      measureLineWidth(candidate, fontSize, weight, letterSpacing) > maxWidth &&
+      current.length > 0
+    ) {
       wrapped.push(current);
       current = word;
     } else {
@@ -69,10 +105,19 @@ export function createStringMeasurer(textNodes: TextNode[], maxWidth: number): S
   let pendingLetterSpacing = 0;
 
   const flush = () => {
-    const lines = wrapLine(pendingLine, pendingFontSize, pendingWeight, pendingLetterSpacing, maxWidth);
+    const lines = wrapLine(
+      pendingLine,
+      pendingFontSize,
+      pendingWeight,
+      pendingLetterSpacing,
+      maxWidth,
+    );
     const lineHeight = pendingLineHeight || pendingFontSize * 1.2;
     lines.forEach((line) => {
-      width = Math.max(width, measureLineWidth(line, pendingFontSize, pendingWeight, pendingLetterSpacing));
+      width = Math.max(
+        width,
+        measureLineWidth(line, pendingFontSize, pendingWeight, pendingLetterSpacing),
+      );
       height += lineHeight;
     });
     pendingLine = '';

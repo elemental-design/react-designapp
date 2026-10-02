@@ -20,7 +20,7 @@ const DATA = [
     location: 'Vienna, Austria',
     url: 'mxstbr.com',
     profile_image_url:
-      'https://pbs.twimg.com/profile_images/763033229993574400/6frGyDyA_400x400.jpg',
+      'https://fastly.picsum.photos/id/788/200/200.jpg?hmac=ECykjkngzBhLGOjhU-UYPGXXjL8Ba8VPX3S_xid4T-k',
   },
   {
     name: '- ̗̀Jackie ̖́-',
@@ -39,7 +39,8 @@ const DATA = [
       'an equal command of technology and form • functional programming (oc)cultist • design tools @airbnbdesign',
     location: 'California',
     url: 'weirdwideweb.jon.gold',
-    profile_image_url: 'https://pbs.twimg.com/profile_images/833785170285178881/loBb32g3.jpg',
+    profile_image_url:
+      'https://fastly.picsum.photos/id/370/200/200.jpg?hmac=HT9dVkM8BnOVYNnQU3Kiehyb9hJUPrehSqcOHXrq_y0',
   },
 ];
 

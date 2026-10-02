@@ -1,0 +1,27 @@
+{
+  "name": "multi-platform",
+  "version": "1.0.0",
+  "description": "",
+  "skpm": {
+    "main": "multi-platform.sketchplugin",
+    "manifest": "src/manifest.json"
+  },
+  "scripts": {
+    "generate": "node -r @babel/register src/main.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@skpm/builder": "^0.7.5",
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0"
+  },
+  "dependencies": {
+    "chroma-js": "^1.2.2",
+    "prop-types": "^15.5.8",
+    "react": "^16.3.2",
+    "react-sketchapp": "^3.0.0",
+    "react-test-renderer": "^16.3.2"
+  }
+}

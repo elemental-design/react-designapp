@@ -1,0 +1,20 @@
+{
+  "name": "styleguide",
+  "private": true,
+  "skpm": {
+    "main": "styleguide.sketchplugin",
+    "manifest": "src/manifest.json"
+  },
+  "scripts": {
+    "build-lib": "npm run build:main --prefix ../.. || true",
+    "generate": "npm run build-lib && node -r @babel/register src/main.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "chroma-js": "^1.2.2"
+  }
+}

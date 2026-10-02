@@ -29,7 +29,7 @@ describe('Figma backend: nested auto-layout frame', () => {
           </Artboard>
         </Page>
       </Document>,
-      { lastModified: '2024-06-14T13:14:19Z', name: 'New File 1' },
+      { lastModified: '2024-06-14T13:14:19Z', name: 'New File 1', autoLayout: true },
     );
 
     const tooltip = json.document.children[0].children[0];

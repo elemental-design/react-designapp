@@ -4,7 +4,7 @@ import { Page } from '../../../src/components/Page';
 import { renderToFigmaJSON } from '../../../src/renderToFigmaJSON';
 
 describe('Figma backend: empty page', () => {
-  it('generates a document with a single empty CANVAS page', () => {
+  it('generates a document with a single empty PAGE', () => {
     const json = renderToFigmaJSON()(
       <Document>
         <Page name="Page 1" />
@@ -18,7 +18,7 @@ describe('Figma backend: empty page', () => {
 
     const page = json.document.children[0];
     expect(page.id).toBe('0:1');
-    expect(page.type).toBe('CANVAS');
+    expect(page.type).toBe('PAGE');
     expect(page.name).toBe('Page 1');
     expect(page.children).toEqual([]);
     expect(page.prototypeStartNodeID).toBeNull();

@@ -29,8 +29,8 @@ Object {
             },
             "blendMode": "PASS_THROUGH",
             "constraints": Object {
-              "horizontal": "LEFT",
-              "vertical": "TOP",
+              "horizontal": "MIN",
+              "vertical": "MIN",
             },
             "cornerRadius": 8,
             "effects": Array [
@@ -71,6 +71,7 @@ Object {
                 "type": "SOLID",
               },
             ],
+            "height": 80,
             "id": "1:2",
             "name": "Card",
             "relativeTransform": Array [
@@ -106,6 +107,9 @@ Object {
               },
             ],
             "type": "RECTANGLE",
+            "width": 120,
+            "x": 0,
+            "y": 0,
           },
         ],
         "exportSettings": Array [],
@@ -118,7 +122,7 @@ Object {
         },
         "prototypeStartNodeID": null,
         "scrollBehavior": "SCROLLS",
-        "type": "CANVAS",
+        "type": "PAGE",
       },
     ],
     "id": "0:0",

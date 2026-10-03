@@ -5,7 +5,7 @@ import * as PropTypes from 'prop-types';
 // The Figma backend renders headlessly to Figma file-format JSON (no Figma
 // API usage); the Sketch backend (`backend: 'sketch'`) would emit Sketch
 // format instead, using the native macOS bridge for text measurement.
-import { renderToDesignJSON, Artboard, Text, View } from '../../../lib';
+import { renderToDesignJSON, Artboard, Text, View } from '../../../packages/react-designapp/';
 import chroma from 'chroma-js';
 
 // take a hex and give us a nice text color to put over it

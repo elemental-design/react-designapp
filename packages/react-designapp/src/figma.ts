@@ -11,7 +11,7 @@ import NodeBridge from './platformBridges/node';
 // imports to create pages, frames, text nodes, styles, etc.
 //
 // Usage (after building, e.g. from `lib/figma`):
-//   import { renderToJSON } from 'react-sketchapp/lib/figma';
+//   import { renderToJSON } from 'react-designapp/figma';
 //   const figmaFile = renderToJSON(<App />);
 export function renderToJSON(
   element: React.ReactElement,

@@ -1,0 +1,31 @@
+{
+  "name": "react-figmaapp",
+  "version": "0.1.0",
+  "description": "A React renderer for Figma (re-exports react-designapp/figma)",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "license": "MIT",
+  "files": ["lib"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "clean": "rm -rf lib",
+    "test:unit": "echo 'no tests'",
+    "test:ci": "echo 'no tests'"
+  },
+  "dependencies": {
+    "react-designapp": "workspace:^"
+  },
+  "peerDependencies": {
+    "react": "*"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.34",
+    "react": "^16.13.1",
+    "typescript": "^3.8.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/airbnb/react-sketchapp",
+    "directory": "packages/react-figmaapp"
+  }
+}

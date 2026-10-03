@@ -7,6 +7,7 @@ import { makeRectShapeLayer, makeShapeGroup } from '../jsonUtils/shapeLayers';
 import { createBorders } from '../jsonUtils/borders';
 import { TreeNode } from '../types';
 import { Props } from '../components/Image';
+import { resolveRadii } from '../utils/resolveRadius';
 
 function extractURLFromSource(source?: string | { uri?: string } | null): string | undefined {
   if (typeof source === 'string') {
@@ -23,13 +24,6 @@ export class ImageRenderer extends SketchRenderer {
   }: TreeNode<Props & { resizeMode?: FileFormat.PatternFillType }>) {
     let layers: FileFormat.ShapeGroup[] = [];
 
-    const {
-      borderTopLeftRadius = 0,
-      borderTopRightRadius = 0,
-      borderBottomRightRadius = 0,
-      borderBottomLeftRadius = 0,
-    } = style;
-
     const url = extractURLFromSource(props.source);
 
     const image = getImageDataFromURL(this.platformBridge)(url);
@@ -37,12 +31,7 @@ export class ImageRenderer extends SketchRenderer {
     const fillImage = makeJSONDataReference(image);
 
     const frame = makeRect(0, 0, layout.width, layout.height);
-    const radii = [
-      borderTopLeftRadius,
-      borderTopRightRadius,
-      borderBottomRightRadius,
-      borderBottomLeftRadius,
-    ];
+    const radii = resolveRadii(style, layout.width, layout.height);
     const shapeLayer = makeRectShapeLayer(0, 0, layout.width, layout.height, radii);
 
     const fills = [makeImageFill(fillImage, props.resizeMode)];

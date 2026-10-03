@@ -6,6 +6,7 @@ import { TreeNode } from '../types';
 import { createBorders } from '../jsonUtils/borders';
 import { hasAnyDefined } from '../utils/hasAnyDefined';
 import { Props } from '../components/View';
+import { resolveRadii } from '../utils/resolveRadius';
 
 const VISIBLE_STYLES = [
   'shadowColor',
@@ -59,24 +60,12 @@ export class ViewRenderer extends SketchRenderer {
   )[] {
     let layers: FileFormat.ShapeGroup[] = [];
     // NOTE(lmr): the group handles the position, so we just care about width/height here
-    const {
-      borderTopLeftRadius = 0,
-      borderTopRightRadius = 0,
-      borderBottomRightRadius = 0,
-      borderBottomLeftRadius = 0,
-    } = style;
-
     if (!hasAnyDefined(style, VISIBLE_STYLES)) {
       return layers;
     }
 
     const frame = makeRect(0, 0, layout.width, layout.height);
-    const radii = [
-      borderTopLeftRadius,
-      borderTopRightRadius,
-      borderBottomRightRadius,
-      borderBottomLeftRadius,
-    ];
+    const radii = resolveRadii(style, layout.width, layout.height);
     const shapeLayer = makeRectShapeLayer(
       0,
       0,

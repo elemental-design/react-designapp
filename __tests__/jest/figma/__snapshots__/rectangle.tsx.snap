@@ -1,0 +1,113 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Figma backend: rectangle generates a leaf View as a RECTANGLE node with a SOLID fill 1`] = `
+Object {
+  "componentSets": Object {},
+  "components": Object {},
+  "document": Object {
+    "children": Array [
+      Object {
+        "backgroundColor": Object {
+          "a": 1,
+          "b": 1,
+          "g": 1,
+          "r": 1,
+        },
+        "children": Array [
+          Object {
+            "absoluteBoundingBox": Object {
+              "height": 200,
+              "width": 326,
+              "x": -282,
+              "y": -153,
+            },
+            "absoluteRenderBounds": Object {
+              "height": 200,
+              "width": 326,
+              "x": -282,
+              "y": -153,
+            },
+            "blendMode": "PASS_THROUGH",
+            "constraints": Object {
+              "horizontal": "MIN",
+              "vertical": "MIN",
+            },
+            "cornerRadius": 0,
+            "effects": Array [],
+            "exportSettings": Array [],
+            "fillGeometry": Array [
+              Object {
+                "path": "M0 0L326 0L326 200L0 200L0 0Z",
+                "windingRule": "NONZERO",
+              },
+            ],
+            "fills": Array [
+              Object {
+                "blendMode": "NORMAL",
+                "color": Object {
+                  "a": 1,
+                  "b": 0.10196078431372549,
+                  "g": 1,
+                  "r": 0,
+                },
+                "type": "SOLID",
+              },
+            ],
+            "height": 200,
+            "id": "1:2",
+            "name": "Rectangle 1",
+            "relativeTransform": Array [
+              Array [
+                1,
+                0,
+                -282,
+              ],
+              Array [
+                0,
+                1,
+                -153,
+              ],
+            ],
+            "scrollBehavior": "SCROLLS",
+            "size": Object {
+              "x": 326,
+              "y": 200,
+            },
+            "strokeAlign": "INSIDE",
+            "strokeGeometry": Array [],
+            "strokeWeight": 1,
+            "strokes": Array [],
+            "type": "RECTANGLE",
+            "width": 326,
+            "x": -282,
+            "y": -153,
+          },
+        ],
+        "exportSettings": Array [],
+        "flowStartingPoints": Array [],
+        "id": "0:1",
+        "name": "Page 1",
+        "prototypeDevice": Object {
+          "rotation": "NONE",
+          "type": "NONE",
+        },
+        "prototypeStartNodeID": null,
+        "scrollBehavior": "SCROLLS",
+        "type": "PAGE",
+      },
+    ],
+    "id": "0:0",
+    "name": "Document",
+    "scrollBehavior": "SCROLLS",
+    "type": "DOCUMENT",
+  },
+  "editorType": "figma",
+  "lastModified": "2024-06-14T13:14:19Z",
+  "linkAccess": "inherit",
+  "name": "New File 1",
+  "role": "owner",
+  "schemaVersion": 0,
+  "styles": Object {},
+  "version": "0",
+}
+`;

@@ -1,19 +1,21 @@
 {
   "name": "react-strict-dom-figma",
   "version": "0.0.0",
-  "description": "react-strict-dom renderer targeting Figma (skeleton)",
+  "description": "Static React Strict DOM primitives for the react-figmaapp renderer",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "license": "MIT",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "clean": "rm -rf lib",
-    "test:unit": "echo 'no tests'",
-    "test:ci": "echo 'no tests'"
+    "test:unit": "pnpm run build && pnpm --filter strict-dom-figma-example build && node --test tests/*.test.js",
+    "test:ci": "pnpm run test:unit"
   },
   "dependencies": {
-    "react-designapp": "workspace:^"
+    "react-figmaapp": "workspace:^"
   },
   "peerDependencies": {
     "react": "*"
@@ -21,7 +23,8 @@
   "devDependencies": {
     "@types/react": "^16.9.34",
     "react": "^16.13.1",
-    "typescript": "^3.8.3"
+    "typescript": "^3.8.3",
+    "react-test-renderer": "^16.13.1"
   },
   "repository": {
     "type": "git",

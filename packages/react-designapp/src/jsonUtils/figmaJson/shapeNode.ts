@@ -76,7 +76,11 @@ export function buildShapeNode(
       fillGeometry: [],
       ...autoLayoutFields,
       cornerRadius,
-      clipsContent: style.overflow === 'hidden' || style.overflow === 'scroll',
+      // StyleSheet expands overflow into its two axis properties. Figma
+      // clips both axes together, so either clipped axis enables clipping.
+      clipsContent: [style.overflow, style.overflowX, style.overflowY].some(
+        (value) => value === 'hidden' || value === 'scroll',
+      ),
       backgrounds: resolvedFills,
       children,
     };

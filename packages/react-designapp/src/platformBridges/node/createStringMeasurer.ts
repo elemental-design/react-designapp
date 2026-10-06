@@ -1,5 +1,6 @@
 import { Size, TextNode } from '../../types';
 import { resolveFontWeight } from './findFontName';
+import { arialWidth } from './arialWidths';
 
 // Pure JS re-implementation of the native `createStringMeasurer` bridge
 // method. Real font metrics aren't available without native font APIs
@@ -35,7 +36,13 @@ function isWideCodePoint(codePoint: number): boolean {
   );
 }
 
-function measureLineWidth(line: string, fontSize: number, weight: number, letterSpacing: number) {
+function measureLineWidth(
+  line: string,
+  fontSize: number,
+  weight: number,
+  letterSpacing: number,
+  fontFamily: string,
+) {
   if (line.length === 0) {
     return 0;
   }
@@ -45,7 +52,8 @@ function measureLineWidth(line: string, fontSize: number, weight: number, letter
   let glyphWidth = 0;
   segments.forEach((segment) => {
     const codePoint = segment.codePointAt(0) as number;
-    const segmentRatio = isWideCodePoint(codePoint) ? EMOJI_CHAR_WIDTH_RATIO : ratio;
+    const measured = /^Arial$/i.test(fontFamily) ? arialWidth(segment, weight) : undefined;
+    const segmentRatio = measured ?? (isWideCodePoint(codePoint) ? EMOJI_CHAR_WIDTH_RATIO : ratio);
     glyphWidth += fontSize * segmentRatio;
   });
   const spacing = letterSpacing * Math.max(0, segments.length - 1);
@@ -58,11 +66,12 @@ function wrapLine(
   weight: number,
   letterSpacing: number,
   maxWidth: number,
+  fontFamily: string,
 ): string[] {
   if (
     !Number.isFinite(maxWidth) ||
     maxWidth <= 0 ||
-    measureLineWidth(line, fontSize, weight, letterSpacing) <= maxWidth
+    measureLineWidth(line, fontSize, weight, letterSpacing, fontFamily) <= maxWidth
   ) {
     return [line];
   }
@@ -74,7 +83,7 @@ function wrapLine(
   words.forEach((word) => {
     const candidate = current.length === 0 ? word : `${current} ${word}`;
     if (
-      measureLineWidth(candidate, fontSize, weight, letterSpacing) > maxWidth &&
+      measureLineWidth(candidate, fontSize, weight, letterSpacing, fontFamily) > maxWidth &&
       current.length > 0
     ) {
       wrapped.push(current);
@@ -100,6 +109,7 @@ export function createStringMeasurer(textNodes: TextNode[], maxWidth: number): S
 
   let pendingLine = '';
   let pendingFontSize = 14;
+  let pendingFontFamily = 'Arial';
   let pendingWeight = 400;
   let pendingLineHeight = 0;
   let pendingLetterSpacing = 0;
@@ -111,12 +121,19 @@ export function createStringMeasurer(textNodes: TextNode[], maxWidth: number): S
       pendingWeight,
       pendingLetterSpacing,
       maxWidth,
+      pendingFontFamily,
     );
     const lineHeight = pendingLineHeight || pendingFontSize * 1.2;
     lines.forEach((line) => {
       width = Math.max(
         width,
-        measureLineWidth(line, pendingFontSize, pendingWeight, pendingLetterSpacing),
+        measureLineWidth(
+          line,
+          pendingFontSize,
+          pendingWeight,
+          pendingLetterSpacing,
+          pendingFontFamily,
+        ),
       );
       height += lineHeight;
     });
@@ -131,6 +148,7 @@ export function createStringMeasurer(textNodes: TextNode[], maxWidth: number): S
     const letterSpacing = textStyles.letterSpacing || 0;
 
     pendingFontSize = fontSize;
+    pendingFontFamily = textStyles.fontFamily || 'Arial';
     pendingWeight = weight;
     pendingLineHeight = lineHeight;
     pendingLetterSpacing = letterSpacing;

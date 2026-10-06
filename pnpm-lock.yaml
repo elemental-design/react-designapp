@@ -166,6 +166,28 @@ importers:
 
   .: {}
 
+  examples/strict-dom-figma:
+    dependencies:
+      react:
+        specifier: ^16.13.1
+        version: 16.14.0
+      react-figmaapp:
+        specifier: workspace:^
+        version: link:../../packages/react-figmaapp
+      react-strict-dom-figma:
+        specifier: workspace:^
+        version: link:../../packages/react-strict-dom-figma
+    devDependencies:
+      '@types/node':
+        specifier: ^13.13.2
+        version: 13.13.52
+      '@types/react':
+        specifier: ^16.9.34
+        version: 16.14.70
+      typescript:
+        specifier: ^3.8.3
+        version: 3.9.10
+
   packages/react-designapp:
     dependencies:
       '@lona/svg-model':
@@ -314,9 +336,9 @@ importers:
 
   packages/react-strict-dom-figma:
     dependencies:
-      react-designapp:
+      react-figmaapp:
         specifier: workspace:^
-        version: link:../react-designapp
+        version: link:../react-figmaapp
     devDependencies:
       '@types/react':
         specifier: ^16.9.34
@@ -324,6 +346,9 @@ importers:
       react:
         specifier: ^16.13.1
         version: 16.14.0
+      react-test-renderer:
+        specifier: ^16.13.1
+        version: 16.14.0(react@16.14.0)
       typescript:
         specifier: ^3.8.3
         version: 3.9.10

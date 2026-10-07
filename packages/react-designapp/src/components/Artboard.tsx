@@ -14,6 +14,10 @@ const ViewportPropTypes = {
 };
 
 export const ArtboardPropTypes = {
+  id: PropTypes.string,
+  nativeID: PropTypes.string,
+  renderId: PropTypes.string,
+  sourceId: PropTypes.string,
   style: or([PropTypes.shape(ViewStylePropTypes), PropTypes.number]),
   name: PropTypes.string,
   isHome: PropTypes.bool,
@@ -37,6 +41,10 @@ export class Artboard extends React.Component<Props> {
         <sketch_artboard
           style={style}
           name={this.props.name}
+          id={this.props.id}
+          nativeID={this.props.nativeID}
+          renderId={this.props.renderId}
+          sourceId={this.props.sourceId}
           viewport={this.props.viewport}
           isHome={this.props.isHome}
         >

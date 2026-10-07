@@ -31,3 +31,9 @@
 - [Change Log](/CHANGELOG.md)
 - [FAQ](/docs/FAQ.md)
 - [Contributing](https://github.com/airbnb/react-sketchapp/blob/master/.github/CONTRIBUTING.md)
+
+- [Live Figma renderer plan and test environment](/docs/figma-live/README.md)
+- [Using the live Figma renderer](/docs/figma-live/usage.md)
+
+
+[MDX document rendering example](../examples/mdx-figma/README.md): general MDX compilation is shared through React Platform; design serialization stays in React Designapp. No live Figma mutation or slide splitting is performed.

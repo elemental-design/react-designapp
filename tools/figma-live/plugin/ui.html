@@ -1,0 +1,16 @@
+<label>Local bridge token <input id="token" type="password"></label><button id="connect" data-testid="probe-connect">Connect</button><pre id="status">Disconnected</pre>
+<script>
+let timer;
+const base='http://localhost:3847';
+const url=path=>base+path+'?token='+encodeURIComponent(document.getElementById('token').value);
+document.getElementById('connect').onclick=()=>{
+ clearInterval(timer);
+ const poll=async()=>{try{const response=await fetch(url('/desired'));if(!response.ok)throw Error('Bridge '+response.status);const desired=await response.json();parent.postMessage({pluginMessage:{type:'apply',desired}},'*');}catch(e){document.getElementById('status').textContent=String(e);}};
+ poll();timer=setInterval(poll,500);
+};
+window.onmessage=async event=>{
+ const message=event.data.pluginMessage;if(!message)return;
+ document.getElementById('status').textContent=JSON.stringify(message);
+ await fetch(url('/status'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(message)});
+};
+</script>

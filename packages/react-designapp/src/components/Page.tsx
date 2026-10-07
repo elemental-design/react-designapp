@@ -5,6 +5,10 @@ import { StyleSheet } from '../stylesheet';
 import { PageStylePropTypes } from './PageStylePropTypes';
 
 export const PagePropTypes = {
+  id: PropTypes.string,
+  nativeID: PropTypes.string,
+  renderId: PropTypes.string,
+  sourceId: PropTypes.string,
   name: PropTypes.string,
   children: PropTypes.node,
   style: or([PropTypes.shape(PageStylePropTypes), PropTypes.number]),

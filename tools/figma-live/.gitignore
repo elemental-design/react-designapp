@@ -1,0 +1,4 @@
+node_modules/
+artifacts/
+plugin/manifest.json
+generated-plugin/

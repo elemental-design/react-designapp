@@ -4,11 +4,7 @@ import { RenderToFigmaJSONOptions } from '../jsonUtils/figmaJson/buildFigmaDocum
 import { FigmaFile } from '../jsonUtils/figmaJson/types';
 import { RenderBackend } from './types';
 
-// The Figma backend: headless, like the Sketch backend -- it takes the
-// shared intermediate tree and outputs Figma file-format JSON. There is no
-// Figma API usage and no live/hot renderer; a separate Figma plugin is
-// responsible for importing this JSON and creating the actual pages,
-// frames, text nodes, styles, etc. in a Figma document.
+// The backend registry remains headless; the live dev bridge consumes its snapshots.
 export const figmaBackend: RenderBackend<FigmaFile, RenderToFigmaJSONOptions> = {
   name: 'figma',
   defaultPlatformBridge: NodeBridge,

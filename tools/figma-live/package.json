@@ -1,0 +1,22 @@
+{
+  "name": "figma-live-probe",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "node server.mjs",
+    "prepare": "node prepare.mjs",
+    "discover": "node automate.mjs discover",
+    "smoke": "node automate.mjs smoke",
+    "test": "node --test protocol.test.mjs",
+    "restart": "node automate.mjs restart",
+    "dev": "node live/dev.mjs",
+    "test:live": "node --test live/*.test.mjs",
+    "test:live:e2e": "node live/e2e.mjs",
+    "hot": "node live/hot.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.56.1",
+    "ws": "8.22.0"
+  }
+}

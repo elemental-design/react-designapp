@@ -68,6 +68,10 @@ export class Image extends React.Component<Props> {
 
     return (
       <sketch_image
+        id={this.props.id}
+        nativeID={this.props.nativeID}
+        renderId={this.props.renderId}
+        sourceId={this.props.sourceId}
         style={style}
         source={source || defaultSource}
         name={name}

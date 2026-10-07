@@ -5,7 +5,8 @@
   "scripts": {
     "build": "pnpm -r run build",
     "test": "pnpm -r run test:unit",
-    "test:ci": "pnpm -r run test:ci"
+    "test:ci": "pnpm -r run test:ci",
+    "example:mdx": "pnpm --dir ../react-platform --filter @react-platform/mdx build && pnpm --filter react-designapp build && pnpm --filter react-figmaapp build && pnpm --filter react-strict-dom-figma build && pnpm --filter mdx-figma-example generate"
   },
   "engines": {
     "node": ">=18"

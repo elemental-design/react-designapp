@@ -24,6 +24,10 @@ export class Text extends React.Component<Props> {
   render() {
     return (
       <sketch_text
+        id={this.props.id}
+        nativeID={this.props.nativeID}
+        renderId={this.props.renderId}
+        sourceId={this.props.sourceId}
         name={this.props.name}
         style={StyleSheet.flatten(this.props.style)}
         resizingConstraint={this.props.resizingConstraint}

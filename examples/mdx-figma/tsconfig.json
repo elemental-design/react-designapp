@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", "module": "NodeNext", "moduleResolution": "NodeNext",
+    "jsx": "react-jsx", "strict": true, "skipLibCheck": true,
+    "allowJs": true, "checkJs": true, "noEmit": true
+  },
+  "include": ["*.tsx", "*.mjs"]
+}

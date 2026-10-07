@@ -1,0 +1,80 @@
+<style>
+  body {
+    margin: 16px;
+    font: 12px system-ui;
+    color: #222;
+    background: #fafafa;
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+  }
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px;
+    margin-top: 5px;
+  }
+  button {
+    padding: 7px 12px;
+    cursor: pointer;
+  }
+  pre {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    max-height: 90px;
+    overflow: auto;
+  }
+  details {
+    margin-top: 12px;
+  }
+  #status {
+    margin: 12px 0;
+  }
+</style>
+<label>Bridge token <input id="token" type="password" /></label
+><button id="connect">Connect</button>
+<button id="focus">Focus canvas</button>
+<div id="status">Disconnected</div>
+<details>
+  <summary>Render details</summary>
+  <pre id="details"></pre>
+</details>
+<script>
+  let socket, retry;
+  function connect() {
+    clearTimeout(retry);
+    if (socket) {
+      socket.onclose = null;
+      socket.close();
+    }
+    socket = new WebSocket(
+      'ws://localhost:3848/?token=' + encodeURIComponent(document.getElementById('token').value),
+    );
+    socket.onopen = () =>
+      (document.getElementById('status').textContent = 'Connected; waiting for render');
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === 'snapshot') parent.postMessage({ pluginMessage: message }, '*');
+      else
+        document.getElementById('status').textContent = message.message || JSON.stringify(message);
+    };
+    socket.onclose = () => {
+      document.getElementById('status').textContent = 'Disconnected; retrying';
+      retry = setTimeout(connect, 1000);
+    };
+  }
+  document.getElementById('connect').onclick = connect;
+  document.getElementById('focus').onclick = () =>
+    parent.postMessage({ pluginMessage: { type: 'focus' } }, '*');
+  window.onmessage = (event) => {
+    const message = event.data.pluginMessage;
+    if (!message) return;
+    document.getElementById('status').textContent =
+      message.type === 'applied'
+        ? `Applied revision ${message.revision} · ${Object.keys(message.mappings).length} nodes`
+        : message.message || message.type;
+    document.getElementById('details').textContent = JSON.stringify(message, null, 2);
+    if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify(message));
+  };
+</script>

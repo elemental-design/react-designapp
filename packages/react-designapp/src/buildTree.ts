@@ -109,7 +109,17 @@ export const buildTree = (bridge: PlatformBridge) => (element: React.ReactElemen
   if (!rendered) {
     throw new Error('Cannot render react element');
   }
-  const json = Array.isArray(rendered) ? rendered[0] : rendered;
+  // Fragments have no host node. Preserve their siblings in an implicit
+  // page (or document for sibling pages), rather than silently dropping roots.
+  const json: TestRenderer.ReactTestRendererNode = Array.isArray(rendered)
+    ? {
+        type: rendered.every((child) => child.type === 'sketch_page')
+          ? 'sketch_document'
+          : 'sketch_page',
+        props: { name: 'Page 1', style: {} },
+        children: rendered,
+      }
+    : rendered;
   if (!json) {
     throw new Error('Cannot render react element');
   }

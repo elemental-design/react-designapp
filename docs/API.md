@@ -937,3 +937,9 @@ export default () => {
   render(<Document />, sketch.getSelectedDocument().selectedPage);
 };
 ```
+
+## renderToLiveJSON(element, options)
+
+Available from `react-designapp/figma` (and the `react-figmaapp` wrapper). Uses the same headless layout/export pipeline, adds a versioned live envelope, and assigns internal IDs to anonymous nodes. Optional public `id` and `nativeID` props select stable authored identities (`id` takes precedence); legacy `renderId` remains supported. Duplicate explicit IDs are rejected. Automatic identities follow parent/child position and can change on structural edits. Options require `projectId` and `rootId`; `sourceId` is optional node provenance. One page per root is supported; native auto layout is rejected.
+
+The snapshot is consumed by the persistent Figma plugin and watch bridge. See [live renderer usage](/docs/figma-live/usage.md) for setup, automatic plugin launch, and limitations. This API creates a snapshot; it does not itself launch Figma or open a connection.

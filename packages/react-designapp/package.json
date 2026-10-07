@@ -14,9 +14,6 @@
     "Mathieu Dutour <mathieu@dutour.me>",
     "Jarid Margolin <jaridmargolin@gmail.com>"
   ],
-  "pre-commit": [
-    "lint-staged"
-  ],
   "scripts": {
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",

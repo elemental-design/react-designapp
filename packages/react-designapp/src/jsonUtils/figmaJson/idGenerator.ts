@@ -8,8 +8,8 @@
 // addressing scheme. They're still useful: a consuming plugin can map them
 // to the real Figma node ids it creates, and keep that mapping around to
 // support incremental/diff-based updates against an existing Figma
-// file/page/frame in the future (out of scope here -- this backend only
-// produces a one-shot JSON document).
+// file/page/frame. Live updates use explicit renderId provenance instead
+// of these traversal-dependent serialization IDs.
 export class FigmaIdGenerator {
   private counter = 2;
 

@@ -48,6 +48,8 @@ export type FigmaTextStyle = {
 };
 
 export type FigmaNodeCommon = {
+  renderId?: string;
+  sourceId?: string;
   id: string;
   name: string;
   scrollBehavior: 'SCROLLS';

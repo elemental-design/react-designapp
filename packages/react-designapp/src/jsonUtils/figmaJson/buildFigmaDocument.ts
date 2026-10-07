@@ -45,7 +45,7 @@ function resolveName(node: TreeNode): string {
 // node. Absolute positions are accumulated while walking down the tree,
 // since `layout.left`/`layout.top` on each TreeNode are relative to its
 // parent (as returned by Yoga).
-export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): FigmaNode | null {
+function buildFigmaNodeContents(node: TreeNode | string, ctx: WalkContext): FigmaNode | null {
   if (typeof node === 'string') {
     return null;
   }
@@ -96,6 +96,21 @@ export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): Figma
     ctx.platformBridge,
     ctx.autoLayout,
   );
+}
+
+export function buildFigmaNode(node: TreeNode | string, ctx: WalkContext): FigmaNode | null {
+  const result = buildFigmaNodeContents(node, ctx);
+  if (result && typeof node !== 'string') {
+    const authoredId = node.props.id ?? node.props.nativeID ?? node.props.renderId;
+    if (authoredId !== undefined && authoredId !== null) {
+      if (typeof authoredId !== 'string' || !authoredId.length) {
+        throw new Error(`id/nativeID must be a non-empty string on ${result.name}`);
+      }
+      result.renderId = authoredId;
+    }
+    if (node.props.sourceId) result.sourceId = node.props.sourceId;
+  }
+  return result;
 }
 
 function buildFigmaPage(

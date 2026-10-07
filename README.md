@@ -177,3 +177,8 @@ A Penpot backend is not implemented yet — this is only the extension point for
 - [Data Fetching](http://airbnb.io/react-sketchapp/docs/guides/data-fetching.html)
 - [FAQ](http://airbnb.io/react-sketchapp/docs/FAQ.html)
 - [Contributing](https://github.com/airbnb/react-sketchapp/blob/master/.github/CONTRIBUTING.md)
+
+
+## MDX documents
+
+The [MDX Figma example](examples/mdx-figma/README.md) uses the shared `@react-platform/mdx` compiler and the existing Strict DOM Figma host to render one document as headless Figma JSON. Run `pnpm example:mdx` after installing the sibling React Platform workspace. This is a document example; deck splitting and future slide-frame export remain in mdx-slides.

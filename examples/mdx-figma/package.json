@@ -1,0 +1,30 @@
+{
+  "name": "mdx-figma-example",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "generate": "node generate.mjs",
+    "test:unit": "node --test tests/*.test.mjs",
+    "test:ci": "pnpm build && pnpm test:unit"
+  },
+  "dependencies": {
+    "@react-platform/mdx": "link:../../../react-platform/packages/mdx",
+    "react": "19.2.0",
+    "react-test-renderer": "19.2.0",
+    "react-designapp": "workspace:^",
+    "react-figmaapp": "workspace:^",
+    "react-strict-dom-figma": "workspace:^",
+    "react-strict-dom": "0.0.55"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.2",
+    "@types/node": "^22.0.0",
+    "@types/mdx": "^2.0.13",
+    "typescript": "5.9.3",
+    "esbuild": "0.25.11"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

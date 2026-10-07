@@ -1,0 +1,33 @@
+---
+title: MDX on the design canvas
+author: React Platform
+---
+
+import { Notice } from './theme.js'
+
+# {frontmatter.title}
+
+Write a **document**, then render the same Markdown and React components with a different host.
+
+<Notice>MDX compiles to React. The component map chooses the rendering primitives.</Notice>
+
+## Shared authoring
+
+- Use Markdown for readable content and **inline emphasis**.
+- Import TypeScript components for custom layouts.
+- Render editable text and frames with React Designapp.
+
+---
+
+## Document structure
+
+Horizontal rules separate sections within the same document. The component map keeps headings, paragraphs, lists and code consistent.
+
+1. Compile the document with the shared MDX package.
+2. Choose a component map for the target host.
+3. Generate a design snapshot.
+
+```tsx
+import { html, css } from 'react-strict-dom';
+// Web/native use upstream; Figma aliases the host.
+```

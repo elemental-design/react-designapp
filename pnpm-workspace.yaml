@@ -1,6 +1,13 @@
 packages:
   - packages/*
   - examples/strict-dom-figma
-onlyBuiltDependencies:
-  - node-sketch-bridge
-  - fsevents
+  - examples/mdx-figma
+# pnpm 12 equivalent of the existing native allowlist, plus the MDX bundler.
+allowBuilds:
+  node-sketch-bridge: true
+  fsevents: true
+  esbuild: true
+  pre-commit: false
+  spawn-sync: false
+
+autoInstallPeers: false
